@@ -1,0 +1,19 @@
+<section class="panel panel-proyectos">
+
+	<div class="intro color2 intro-pro">
+		<h2 class="major">{{proyectos.titulo}}</h2>
+		<p>{{{proyectos.contenido}}}</p>
+	</div>
+
+	<div class="gallery columnas-2 premium-grid">
+
+		{{#proyectos.imagenes}}
+		<a href="{{url_img}}" class="item">
+			<img src="{{url_img}}">
+			<div class="overlay"></div>
+		</a>
+		{{/proyectos.imagenes}}
+
+	</div>
+
+</section>
