@@ -25,6 +25,7 @@ Flight::route('POST /admin/crear', function () {
         'nombres_apellidos' => $d['nombres_apellidos'],
         'email'             => $d['email'],
         'clavel'            => $d['clavel'],
+        'sobrenombre'       => $d['sobrenombre'], // 👈 NUEVO
         'fecha_creacion'    => date('Y-m-d H:i:s'),
         'is_activo'         => 1,
         'rol_id'            => intval($d['rol_id'])
@@ -45,6 +46,7 @@ Flight::route('POST /admin/editar', function () {
     $data = [
         'nombres_apellidos' => $d['nombres_apellidos'],
         'email'             => $d['email'],
+        'sobrenombre'       => $d['sobrenombre'], // 👈 NUEVO
         'is_activo'         => intval($d['is_activo']),
         'rol_id'            => intval($d['rol_id'])
     ];
@@ -106,6 +108,7 @@ Flight::route('GET /admin/listar', function () {
             u.nombres_apellidos,
             u.email,
             u.clavel,
+            u.sobrenombre, -- 👈 NUEVO
             u.is_activo,
             u.rol_id,
             r.nombre AS rol

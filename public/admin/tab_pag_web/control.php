@@ -352,15 +352,41 @@ Flight::route('GET /xoxo/reg_vid/listar', function(){
 });
 
 Flight::route('POST /xoxo/reg_vid/crear', function(){
+
     $d = Flight::request()->data->getData();
+
+    $url = trim($d['codigo']); // 👈 aquí viene el link vimeo
+
+    // 🔥 EXTRAER ID
+    preg_match('/vimeo\.com\/(\d+)/', $url, $m);
+    $video_id = $m[1] ?? null;
+
+    if(!$video_id){
+        Flight::json(['status'=>'error','msg'=>'URL Vimeo inválida']);
+        return;
+    }
+
+    // 🔥 EMBED
+    $embed = "https://player.vimeo.com/video/".$video_id;
+
+    // 🔥 THUMBNAIL
+    $thumb = null;
+
+    try{
+        $json = file_get_contents("https://vimeo.com/api/oembed.json?url=".$url);
+        $data = json_decode($json, true);
+        $thumb = $data['thumbnail_url'] ?? null;
+    }catch(Exception $e){}
 
     DB::insert('reg_pag_item_vid',[
         'item_pag_web_id'=>$d['item'],
         'titulo'=>$d['titulo'],
-        'codigo_web'=>$d['codigo']
+        'codigo_web'=>$embed, // 👈 embed
+        'url_img'=>$thumb // 👈 miniatura
     ]);
 
     Flight::json(['status'=>'ok']);
+
 });
 
 Flight::route('POST /xoxo/reg_vid/eliminar', function(){
@@ -410,3 +436,35 @@ Flight::route('POST /xoxo/reg_img/ordenar', function(){
     }
 });
 
+Flight::route('POST /xoxo/reg_vid/editar', function(){
+
+    $d = Flight::request()->data->getData();
+
+    DB::update('reg_pag_item_vid',[
+        'titulo' => $d['titulo']
+    ],"pag_item_vid_id=%i",$d['id']);
+
+    Flight::json(['status'=>'ok']);
+
+});
+
+Flight::route('POST /xoxo/reg_img/crear_url', function(){
+
+    include DEFINITION;
+    autentificar_administrador();
+
+    $d = Flight::request()->data->getData();
+
+    if(empty($d['url']) || empty($d['item'])){
+        Flight::json(['status'=>'error','msg'=>'datos incompletos']);
+        return;
+    }
+
+    DB::insert('reg_pag_item_img', [
+        'item_pag_web_id' => $d['item'],
+        'url_img' => trim($d['url'])
+    ]);
+
+    Flight::json(['status'=>'ok']);
+
+});

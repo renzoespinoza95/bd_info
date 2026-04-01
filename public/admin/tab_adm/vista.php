@@ -26,7 +26,7 @@
 
           <td>{{ a.usu_id }}</td>
           <td>{{ a.nombres_apellidos }}</td>
-          <td>{{ a.email }}</td>
+          <td>{{ a.sobrenombre }}</td>
           <td>{{ a.clavel }}</td>
           <td>{{ a.rol }}</td>
 
@@ -65,12 +65,25 @@
 
         <label>Nombre de usuario</label>
         <input class="input-xxlarge"
-        v-model="form.email">
+        v-model="form.sobrenombre">
 
         <label>Clave</label>
-        <input class="input-large"
-        type="password"
-        v-model="form.clavel">
+        <div style="display:flex; align-items:center; gap:5px;">
+
+          <input class="input-large"
+          :type="mostrarClave ? 'text' : 'password'"
+          v-model="form.clavel">
+
+          <button class="btn btn-mini"
+          type="button"
+          @click="toggleClave">
+
+            <i class="icon-eye"
+            :class="mostrarClave ? 'icon-eye-open' : 'icon-eye-close'"></i>
+
+          </button>
+
+        </div>
 
 
         <label>Rol</label>
@@ -134,7 +147,7 @@ new Vue({
   data:{
 
     apphost: apphost,
-
+    mostrarClave:false,
     admins:[],
 
     roles:[],
@@ -173,6 +186,10 @@ new Vue({
 
       $('#modalAdmin').modal('show');
 
+    },
+
+    toggleClave(){
+      this.mostrarClave = !this.mostrarClave;
     },
 
 

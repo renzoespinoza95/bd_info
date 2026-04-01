@@ -8,8 +8,8 @@
   </div>
   <div class="container">
   <?php 
-  include "vista.php"; 
   perso::jquery_ui();
+  include "vista.php";   
   include VARPATH . "/public/admin/footer.php"; 
   ?>
   </div>

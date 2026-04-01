@@ -496,12 +496,78 @@ MODAL PERMISOS
 					this.submenus=r.data;
 
 					this.$nextTick(()=>{
-
+						this.activarDragSubmenus();
 						$('#modalSubmenus').modal('show');
-
 					});
 
 				});
+
+			},
+			activarDragMenus(){
+
+			  const vm = this;
+
+			  $(this.$refs.tbodyMenu).sortable({
+
+			    handle: '.label', // 🔥 SOLO ARRASTRA DESDE EL ICONO
+
+			    update: function(){
+
+			      let orden = [];
+
+			      $(vm.$refs.tbodyMenu).find('tr').each(function(index){
+
+			        orden.push({
+			          menu_id: $(this).data('id'),
+			          orden: index + 1
+			        });
+
+			      });
+
+			      // 🔥 GUARDAR EN BACKEND
+			      axios.post(vm.apphost + '/menu/actualizar-orden', {
+			        orden
+			      })
+			      .then(()=>{
+			        vm.listarMenus();
+			      });
+
+			    }
+
+			  });
+
+			},			
+			activarDragSubmenus(){
+
+			  const vm = this;
+
+			  $(this.$refs.tbodySubmenu).sortable({
+
+			    handle: '.drag-handle',
+
+			    update: function(){
+
+			      let orden = [];
+
+			      $(vm.$refs.tbodySubmenu).find('tr').each(function(index){
+
+			        orden.push({
+			          submenu_id: $(this).data('id'),
+			          orden: index + 1
+			        });
+
+			      });
+
+			      axios.post(vm.apphost + '/submenu/actualizar-orden', {
+			        orden
+			      })
+			      .then(()=>{
+			        vm.abrirSubmenus(vm.menuActual);
+			      });
+
+			    }
+
+			  });
 
 			},
 
@@ -550,6 +616,7 @@ MODAL PERMISOS
 
 			this.cargarTipos();
 			this.listarMenus();
+			this.activarDragMenus();
 
 		}
 

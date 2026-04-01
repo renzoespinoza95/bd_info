@@ -174,3 +174,33 @@ Flight::route('GET /yutu/listaCategorias', function () {
     }
 
 });
+
+
+/* =========================================================
+   CREAR
+========================================================= */
+Flight::route('POST /variables/crear', function() {
+
+    include DEFINITION;
+
+    $data = Flight::request()->data->getData();
+
+    if(empty($data['nombre'])){
+        Flight::json([
+            'status' => 'error',
+            'msg' => 'nombre requerido'
+        ], 400);
+        return;
+    }
+
+    DB::insert('reg_vari', [
+        'nombre' => $data['nombre'],
+        'valor'  => $data['valor'] ?? ''
+    ]);
+
+    Flight::json([
+        'status' => 'ok',
+        'vari_id' => DB::insertId()
+    ]);
+
+});

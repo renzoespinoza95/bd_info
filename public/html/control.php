@@ -7,6 +7,7 @@ Flight::route('GET /', function () {
 
     include DEFINITION;
     visita();
+    $mis_visitas = vari("visitas");
 
     // =========================
     // 🔥 INICIO (TXT_INICIO)
@@ -115,6 +116,7 @@ Flight::route('GET /', function () {
         'titulo_pag_web' => vari("TITULO_PAG_WEB"),
         'favicon' => $varhost . '/public/ico/favicon.png',
         'base' => $base,
+        'visitas' => $mis_visitas,
         'version' => $version,
         'url_inicio' => $apphost,
         'fontawesome_url' => $varhost . '/public/bootstrap/font-awesome/css/font-awesome.css'

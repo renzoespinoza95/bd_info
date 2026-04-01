@@ -264,7 +264,12 @@
 
         <button class="btn btn-warning btn-mini"
                 @click="eliminarImagen(img)">
-          Eliminar
+          <i class="fa fa-trash"></i>
+        </button>
+
+        <button class="btn btn-default btn-mini"
+                @click="copiarImagen(img)">
+          <i class="fa fa-copy"></i>
         </button>
 
       </div>
@@ -274,6 +279,9 @@
   </div>
 
   <div class="modal-footer">
+    <button class="btn btn-info" @click="abrirPegarImagen">
+      <i class="fa fa-paste"></i> Pegar imagen
+    </button>
     <button class="btn btn-success" @click="abrirSubirImagen">Subir imagen</button>
     <button class="btn" data-dismiss="modal">Cerrar</button>
   </div>
@@ -325,6 +333,34 @@
   </div>
 </div>
 
+
+<div id="modalPegarImagen" class="modal hide fade fullscreen">
+  <div class="modal-header">
+    <h3>Pegar URL de Imagen</h3>
+  </div>
+
+  <div class="modal-body">
+
+    <input v-model="urlImagenPegar"
+           class="input-xxlarge"
+           placeholder="https://...">
+
+    <br><br>
+
+    <div v-if="urlImagenPegar" style="width:150px;">
+      <img :src="urlImagenPegar" style="width:100%;">
+    </div>
+
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-primary" @click="guardarImagenDesdeURL">
+      Guardar
+    </button>
+    <button class="btn" data-dismiss="modal">Cancelar</button>
+  </div>
+</div>
+
 <!-- =========================================================
    MODAL VIDEOS
 ========================================================= -->
@@ -333,10 +369,31 @@
 
   <div class="modal-body">
     <div style="display:flex;flex-wrap:wrap;gap:10px;">
-      <div v-for="v in videos" style="width:150px;">
-        <div v-html="v.codigo_web"></div>
-        <button class="btn btn-warning btn-mini" @click="eliminarVideo(v)">Eliminar</button>
-      </div>
+        <div v-for="v in videos" 
+             style="width:150px; cursor:pointer;"
+             @click="verVideo(v)">
+
+          <img :src="v.url_img" style="width:100%; border-radius:6px;">
+
+          <div style="font-size:12px; margin-top:5px;">
+            {{ v.titulo }}
+          </div>
+
+          <button class="btn btn-warning btn-mini" 
+                  @click.stop="eliminarVideo(v)">
+            <i class="fa fa-trash"></i>
+          </button>
+          <button class="btn btn-info btn-mini" 
+                  @click.stop="editarVideo(v)">
+            <i class="fa fa-pencil"></i>
+          </button>
+
+          <button class="btn btn-default btn-mini" 
+                  @click.stop="copiarCodigo(v)">
+            <i class="fa fa-copy"></i>
+          </button>
+
+        </div>
     </div>
   </div>
 
@@ -370,6 +427,30 @@
   </div>
 </div>
 
+
+<div id="modalVideoPlayer" class="modal hide fade fullscreen">
+  <div class="modal-header">
+    <h3>{{ videoActual.titulo }}</h3>
+  </div>
+
+  <div class="modal-body" style="text-align:center;">
+
+    <iframe 
+      v-if="videoActual.codigo_web"
+      :src="videoActual.codigo_web"
+      width="100%" 
+      height="400"
+      frameborder="0"
+      allowfullscreen>
+    </iframe>
+
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn" @click="cerrarVideo">Cerrar</button>
+  </div>
+</div>
+
 <!-- =========================================================
    MODAL SUBIR VIDEO
 ========================================================= -->
@@ -382,8 +463,6 @@
 
     <textarea v-model="videoForm.codigo" class="input-xxlarge" placeholder="Codigo embed"></textarea><br>
 
-    <button class="btn btn-warning" @click="previewVideo">Previsualizar</button>
-
     <div id="previewVideo" style="margin-top:10px;"></div>
 
   </div>
@@ -393,6 +472,28 @@
     <button class="btn" data-dismiss="modal">Cerrar</button>
   </div>
 </div>
+
+
+<div id="modalEditarVideo" class="modal hide fade fullscreen">
+  <div class="modal-header">
+    <h3>Editar Video</h3>
+  </div>
+
+  <div class="modal-body">
+    <input v-model="videoFormEditar.titulo" 
+           class="input-xxlarge" 
+           placeholder="Titulo">
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-primary" @click="guardarEditarVideo">
+      Guardar
+    </button>
+    <button class="btn" data-dismiss="modal">Cancelar</button>
+  </div>
+</div>
+
+
 
 </div>
 <style>
@@ -458,10 +559,16 @@ new Vue({
   data:{
     apphost:(typeof apphost!=='undefined'?apphost:''),
 
+    videoFormEditar:{
+      pag_item_vid_id:null,
+      titulo:''
+    },
+
     items:[],
+    urlImagenPegar:'',
     categorias:[],
     subcategorias:[],
-
+    videoActual:{},
     itemForm:{
       titulo:'',
       precio:0,
@@ -583,6 +690,146 @@ new Vue({
       })
       .finally(()=>$.unblockUI())
     },
+
+    editarVideo(v){
+
+      this.videoFormEditar = {
+        pag_item_vid_id: v.pag_item_vid_id,
+        titulo: v.titulo
+      };
+
+      $('#modalVideos').modal('hide');
+
+      setTimeout(()=>{
+        $('#modalEditarVideo').modal('show');
+      },200);
+
+    },   
+
+    abrirPegarImagen(){
+
+      this.urlImagenPegar = '';
+
+      $('#modalImagenes').modal('hide');
+
+      setTimeout(()=>{
+        $('#modalPegarImagen').modal('show');
+      },200);
+
+    },     
+
+    guardarImagenDesdeURL(){
+
+      if(!this.urlImagenPegar){
+        return apprise('Pega una URL válida');
+      }
+
+      this.bloquear('Guardando...');
+
+      axios.post(`${this.apphost}/xoxo/reg_img/crear_url`,{
+        url: this.urlImagenPegar,
+        item: this.itemActual
+      })
+      .then(()=>{
+
+        $('#modalPegarImagen').modal('hide');
+
+        setTimeout(()=>{
+          this.verImagenes(this.itemActual);
+        },200);
+
+      })
+      .finally(()=>$.unblockUI());
+
+    },    
+
+    copiarImagen(img){
+
+      const url = img.url_img;
+
+      navigator.clipboard.writeText(url)
+      .then(()=>{
+        apprise('Imagen copiada 💙');
+      })
+      .catch(()=>{
+        apprise('No se pudo copiar');
+      });
+
+    },    
+
+    guardarEditarVideo(){
+
+      if(!this.videoFormEditar.titulo){
+        return apprise('Escribe el título');
+      }
+
+      this.bloquear('Guardando...');
+
+      axios.post(`${this.apphost}/xoxo/reg_vid/editar`,{
+        id: this.videoFormEditar.pag_item_vid_id,
+        titulo: this.videoFormEditar.titulo
+      })
+      .then(()=>{
+
+        $('#modalEditarVideo').modal('hide');
+
+        setTimeout(()=>{
+          this.verVideos(this.itemActual);
+        },200);
+
+      })
+      .finally(()=>$.unblockUI());
+
+    },    
+
+    copiarCodigo(v){
+
+      let url = v.codigo_web || '';
+
+      // 🔥 EXTRAER ID DE VIMEO
+      const match = url.match(/video\/(\d+)/);
+
+      if(match && match[1]){
+
+        const limpio = `https://vimeo.com/${match[1]}`;
+
+        navigator.clipboard.writeText(limpio)
+        .then(()=>{
+          apprise('Link listo para guardar 😏');
+        })
+        .catch(()=>{
+          apprise('No se pudo copiar');
+        });
+
+      }else{
+
+        apprise('Formato de video inválido');
+
+      }
+
+    },   
+
+    verVideo(v){
+
+      this.videoActual = v;
+
+      $('#modalVideos').modal('hide');
+
+      setTimeout(()=>{
+        $('#modalVideoPlayer').modal('show');
+      },200);
+
+    },
+
+    cerrarVideo(){
+
+      $('#modalVideoPlayer').modal('hide');
+
+      setTimeout(()=>{
+        $('#modalVideos').modal('show');
+      },200);
+
+    },    
 
     activarDragImagenes(){
 
@@ -1178,10 +1425,23 @@ new Vue({
 
     /* VIDEO */
     abrirSubirVideo(){
-      $('#modalVideos').modal('hide')
-      $('#modalSubirVideo').modal('show')
-    },
 
+      // 🔥 LIMPIAR FORM COMPLETAMENTE
+      this.videoForm = {
+        titulo:'',
+        codigo:''
+      };
+
+      // 🔥 LIMPIAR PREVIEW
+      $('#previewVideo').html('');
+
+      $('#modalVideos').modal('hide');
+
+      setTimeout(()=>{
+        $('#modalSubirVideo').modal('show');
+      },200);
+
+    },
     previewVideo(){
       $('#previewVideo').html(this.videoForm.codigo)
     },
@@ -1212,6 +1472,28 @@ new Vue({
       .finally(()=>$.unblockUI())
 
     },
+
+    eliminarVideo(v){
+
+      const self = this;
+
+      apprise('¿Eliminar video?', { confirm:true }, function(ok){
+
+        if(!ok) return;
+
+        self.bloquear('Eliminando...');
+
+        axios.post(`${self.apphost}/xoxo/reg_vid/eliminar`, {
+          id: v.pag_item_vid_id // 🔥 ESTE ES EL CAMPO CORRECTO
+        })
+        .then(()=>{
+          self.verVideos(self.itemActual);
+        })
+        .finally(()=>$.unblockUI());
+
+      });
+
+    },    
     abrirEditarItem(row){
 
         this.bloquear('Cargando...')
