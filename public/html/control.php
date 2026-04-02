@@ -118,6 +118,7 @@ Flight::route('GET /', function () {
         'base' => $base,
         'visitas' => $mis_visitas,
         'version' => $version,
+        'url_proyectos' => $apphost . "/proyectos",        
         'url_inicio' => $apphost,
         'fontawesome_url' => $varhost . '/public/bootstrap/font-awesome/css/font-awesome.css'
     ];
