@@ -237,17 +237,17 @@ function des_barsi(string $tokenB64): string {
     return $plaintext;
 }    
 
-function visita() {
+function visita($nombre = 'visitas') {
 
     // 🔥 Asegurar charset
     DB::query("SET NAMES 'utf8mb4'");
 
-    // 🔥 Incrementar directamente (más eficiente)
+    // 🔥 Incrementar variable dinámica
     DB::query("
         UPDATE reg_vari 
         SET valor = IFNULL(valor,0) + 1
         WHERE nombre = %s
-    ", 'visitas');
+    ", $nombre);
 
 }
 

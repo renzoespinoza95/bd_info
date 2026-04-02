@@ -7,7 +7,7 @@ date_default_timezone_set('America/Lima');
 define('VARPATH', dirname(__FILE__));
 define ('DEFINITION', VARPATH . "/app/definition.php");
 
-$version=1;
+$version=2;
 
 require_once VARPATH."/classes/Meekrodb2.class.php";
 require_once VARPATH."/classes/perso.class.php";
@@ -151,7 +151,7 @@ if (class_exists('WkHtmlToPdf')) {
     $wkh_pdf = new WkHtmlToPdf($options);
 }
 
-$base = $varhost . "/public/html/template/";
+$base = $varhost . "/public/html/";
 $pag_web_neg_id = 1;
 
 // var_dump($administrador_actual);

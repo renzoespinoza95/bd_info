@@ -254,7 +254,7 @@ Flight::route('GET /', function () {
 ========================================================= */
 Flight::route('GET /item/@slug', function ($slug) {
 
-    include DEFINITION;
+    include DEFINITION;    
 
     // =========================
     // 🔥 EXTRAER ID
@@ -363,3 +363,86 @@ Flight::route('GET /item/@slug', function ($slug) {
     );
 });
 
+/* =========================================================
+   PROYECTOS
+========================================================= */
+Flight::route('GET /proyectos', function () {
+
+    include DEFINITION;
+
+    visita("visita_portafolio");
+
+    // =========================
+    // 🔥 HEADER DATA
+    // =========================
+    $header = [
+        'titulo' => 'Portafolio Regentis',        
+        'descripcion' => 'Explora nuestros proyectos más destacados',
+        'icons' => [
+            ['url'=>'#','icon'=>'brands fa-twitter','label'=>'Twitter'],
+            ['url'=>'#','icon'=>'brands fa-instagram','label'=>'Instagram'],
+            ['url'=>'#','icon'=>'brands fa-github','label'=>'Github'],
+            ['url'=>'#','icon'=>'fa-envelope','label'=>'Email'],
+        ]
+    ];
+
+    // =========================
+    // 🔥 PROYECTOS DESDE DB
+    // =========================
+    $imagenes = DB::query("
+        SELECT url_img
+        FROM reg_pag_item_img
+        ORDER BY orden ASC
+    ");
+
+    // =========================
+    // 🔥 MAPEAR A FORMATO MUSTACHE
+    // =========================
+    $items = array_map(function($img){
+
+        return [
+            'full' => $img['url_img'],
+            'thumb' => $img['url_img'], // puedes cambiar luego por thumbnails
+            'titulo' => 'Proyecto Regentis',
+            'descripcion' => 'Desarrollo web profesional',
+            'position' => 'center center'
+        ];
+
+    }, $imagenes);
+
+    // =========================
+    // 🔥 DATA GENERAL
+    // =========================
+    $data = [
+        'title' => 'Proyectos | Regentis',
+        'favicon' => $varhost . '/public/ico/favicon.png',
+        'base' => $base ?? '',
+        'header' => $header,
+        'items' => $items,
+        'footer' => [
+            'copyright' => 'Regentis',
+            'extra' => 'Desarrollado con pasión . Visitas ' . vari("visita_portafolio") 
+        ]
+    ];
+
+    // =========================
+    // 🔥 PARTIALS
+    // =========================
+    $partials = [
+        'head' => file_get_contents(VARPATH . '/public/html/proyectos/comp_proyectos/head.html'),
+        'header' => file_get_contents(VARPATH . '/public/html/proyectos/comp_proyectos/header.html'),
+        'thumbnails' => file_get_contents(VARPATH . '/public/html/proyectos/comp_proyectos/thumbnails.html'),
+        'item' => file_get_contents(VARPATH . '/public/html/proyectos/comp_proyectos/item.html'),
+        'footer' => file_get_contents(VARPATH . '/public/html/proyectos/comp_proyectos/footer.html'),
+        'scripts' => file_get_contents(VARPATH . '/public/html/proyectos/comp_proyectos/scripts.html'),
+    ];
+
+    // =========================
+    // 🔥 RENDER
+    // =========================
+    echo (new Mustache)->render(
+        file_get_contents(VARPATH . '/public/html/proyectos/inicio.html'),
+        $data,
+        $partials
+    );
+});
