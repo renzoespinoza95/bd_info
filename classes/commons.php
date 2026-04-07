@@ -41,19 +41,19 @@ function js($js) {
 function vari($nombre_variable)
 {
 
-$query = <<<EOF
-SELECT * FROM reg_vari WHERE nombre = '$nombre_variable'
-EOF;
+    $query = <<<EOF
+    SELECT * FROM reg_vari WHERE nombre = '$nombre_variable'
+    EOF;
 
-$res = DB::queryFirstRow($query);
-$vari = $res['valor'];    
+    $res = DB::queryFirstRow($query);
+    $vari = $res['valor'];    
 
 
-if($vari == "") {;
-echo "NO EXISTE: $nombre_variable";
-exit;
-}
-return $vari;
+    if($vari == "") {;
+        echo "NO EXISTE: $nombre_variable";
+        exit;
+    }
+    return $vari;
 
 }
 

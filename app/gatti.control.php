@@ -30,3 +30,4 @@ if (!empty($ssa_id) && is_string($ssa_id)) {
 }
 
 require_once VARPATH."/public/html/control.php";
+require_once VARPATH."/public/admin/login/app.php";
