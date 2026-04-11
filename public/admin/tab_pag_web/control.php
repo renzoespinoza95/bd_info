@@ -297,7 +297,9 @@ Flight::route('POST /xoxo/reg_img/crear', function(){
         // 🔥 5. GUARDAR
         DB::insert('reg_pag_item_img', [
             'item_pag_web_id' => $item,
-            'url_img' => $url
+            'url_img' => $url,
+            'titulo' => $_POST['titulo'] ?? '',
+            'descripcion' => $_POST['descripcion'] ?? ''
         ]);
 
         Flight::json(['status'=>'ok','url'=>$url]);
@@ -467,4 +469,24 @@ Flight::route('POST /xoxo/reg_img/crear_url', function(){
 
     Flight::json(['status'=>'ok']);
 
+});
+
+Flight::route('POST /xoxo/reg_img/editar', function(){
+
+    include DEFINITION;
+    autentificar_administrador();
+
+    $d = Flight::request()->data->getData();
+
+    if(empty($d['id'])){
+        Flight::json(['status'=>'error','msg'=>'ID requerido']);
+        return;
+    }
+
+    DB::update('reg_pag_item_img',[
+        'titulo' => $d['titulo'] ?? '',
+        'descripcion' => $d['descripcion'] ?? ''
+    ],"pag_item_img_id=%i",$d['id']);
+
+    Flight::json(['status'=>'ok']);
 });

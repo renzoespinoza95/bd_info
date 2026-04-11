@@ -1,7 +1,21 @@
 <article>
+
 	<a class="thumbnail" href="{{full}}" data-position="{{position}}">
 		<img src="{{thumb}}" alt="" />
 	</a>
-	<h2>{{titulo}}</h2>
-	<p>{{descripcion}}</p>
+
+	<a 
+	  class="btn-whatsapp-pro"
+	  target="_blank"
+	  href="https://wa.me/51988689682?text=Estoy%20interesado%20en%20{{titulo}}"
+	  style="text-transform: uppercase;" 
+	>
+	  💬 Quiero esta app de {{titulo}}
+	</a>
+
+	<p class="badge-desc">
+	  <span class="marquee">{{descripcion}} &nbsp;&nbsp;&nbsp; • &nbsp;&nbsp;&nbsp; {{descripcion}}</span>
+	</p>
+
+
 </article>

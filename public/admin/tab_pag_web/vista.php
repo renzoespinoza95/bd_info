@@ -248,16 +248,23 @@
 
     <div id="contenedorImagenes" style="display:flex;flex-wrap:wrap;gap:15px;">
 
+
+
       <div v-for="(img,index) in imagenes"
            :key="img.pag_item_img_id"
            class="img-item"
            :data-id="img.pag_item_img_id">
 
+        <!-- 🔥 TEXTO SUPERIOR -->
+        <div class="img-text">
+          <div class="marquee titulo" :data-text="img.titulo"></div>
+          <div class="marquee descripcion" :data-text="img.descripcion"></div>
+        </div>
+
         <!-- 🔥 CÍRCULO ORDEN -->
         <div class="orden-circle">
           {{ index + 1 }}
         </div>
-
         <img :src="img.url_img">
 
         <br>
@@ -270,6 +277,11 @@
         <button class="btn btn-default btn-mini"
                 @click="copiarImagen(img)">
           <i class="fa fa-copy"></i>
+        </button>
+
+        <button class="btn btn-info btn-mini"
+                @click="editarImagen(img)">
+          <i class="fa fa-pencil"></i>
         </button>
 
       </div>
@@ -325,11 +337,45 @@
     <div v-if="preview" style="width:150px;height:150px;">
       <img :src="preview" style="width:100%;">
     </div>
+
+    <input v-model="imgForm.titulo"
+       class="input-xxlarge"
+       placeholder="Titulo"><br><br>
+
+    <textarea v-model="imgForm.descripcion"
+              class="input-xxlarge"
+              placeholder="Descripción"></textarea>
   </div>
 
   <div class="modal-footer">
     <button class="btn btn-primary" @click="guardarImagen">Guardar</button>
     <button class="btn" data-dismiss="modal">Cerrar</button>
+  </div>
+</div>
+
+
+<div id="modalEditarImagen" class="modal hide fade fullscreen">
+  <div class="modal-header">
+    <h3>Editar Imagen</h3>
+  </div>
+
+  <div class="modal-body">
+
+    <input v-model="imgForm.titulo"
+           class="input-xxlarge"
+           placeholder="Titulo"><br><br>
+
+    <textarea v-model="imgForm.descripcion"
+              class="input-xxlarge"
+              placeholder="Descripción"></textarea>
+
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-primary" @click="guardarEditarImagen">
+      Guardar
+    </button>
+    <button class="btn" data-dismiss="modal">Cancelar</button>
   </div>
 </div>
 
@@ -524,6 +570,58 @@
   text-align: center;
   font-weight: bold;
 }  
+
+.img-text{
+  width:100px; /* mismo ancho que imagen */
+  overflow:hidden;
+  white-space:nowrap;
+  margin-bottom:5px;
+}
+
+/* MARQUESINA */
+.img-text{
+  width:100%;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  gap:3px; /* 🔥 separa las dos líneas */
+  margin-bottom:6px;
+}
+
+/* 🔥 base */
+.marquee{
+  white-space:nowrap;
+  overflow:hidden;
+  position:relative;
+  height:16px;
+}
+
+/* 🔥 animación interna */
+.marquee::before{
+  content: attr(data-text);
+  position:absolute;
+  white-space:nowrap;
+  animation: scrollText 6s linear infinite;
+}
+
+/* 🔥 TITULO (amarillo) */
+.marquee.titulo::before{
+  color: #FFD700; /* amarillo */
+  font-size:12px;
+  font-weight:bold;
+}
+
+/* 🔥 DESCRIPCION (blanco) */
+.marquee.descripcion::before{
+  color: #fff;
+  font-size:11px;
+}
+
+/* 🔥 animación */
+@keyframes scrollText{
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
 </style>
 
 <script>
@@ -584,6 +682,12 @@ new Vue({
     subcatForm:{
       titulo:'',
       cat:null
+    },
+
+    imgForm:{
+      id:null,
+      titulo:'',
+      descripcion:''
     },
 
     imagenes:[],
@@ -689,6 +793,44 @@ new Vue({
 
       })
       .finally(()=>$.unblockUI())
+    },
+
+    editarImagen(img){
+
+      this.imgForm = {
+        id: img.pag_item_img_id,
+        titulo: img.titulo || '',
+        descripcion: img.descripcion || ''
+      };
+
+      $('#modalImagenes').modal('hide');
+
+      setTimeout(()=>{
+        $('#modalEditarImagen').modal('show');
+      },200);
+
+    },
+
+    guardarEditarImagen(){
+
+      this.bloquear('Guardando...');
+
+      axios.post(`${this.apphost}/xoxo/reg_img/editar`,{
+        id: this.imgForm.id,
+        titulo: this.imgForm.titulo,
+        descripcion: this.imgForm.descripcion
+      })
+      .then(()=>{
+
+        $('#modalEditarImagen').modal('hide');
+
+        setTimeout(()=>{
+          this.verImagenes(this.itemActual);
+        },200);
+
+      })
+      .finally(()=>$.unblockUI());
+
     },
 
     editarVideo(v){
@@ -1376,15 +1518,22 @@ new Vue({
     /* IMAGEN */
     abrirSubirImagen(){
 
-      // 🔥 limpiar preview
+      // 🔥 limpiar todo
       this.preview = null;
 
-      // 🔥 limpiar input file
+      this.imgForm = {
+        titulo:'',
+        descripcion:''
+      };
+
       const input = document.getElementById('fileImg');
       if (input) input.value = '';
 
       $('#modalImagenes').modal('hide')
-      $('#modalSubirImagen').modal('show')
+
+      setTimeout(()=>{
+        $('#modalSubirImagen').modal('show')
+      },200)
     },
 
     previewImg(e){
@@ -1403,24 +1552,20 @@ new Vue({
       f.append('file', file);
       f.append('item', this.itemActual);
 
-      // 🔥 BLOQUEAR UI
+      // 🔥 NUEVO
+      f.append('titulo', this.imgForm.titulo || '');
+      f.append('descripcion', this.imgForm.descripcion || '');
+
       this.bloquear('Subiendo imagen...');
 
-      setTimeout(()=>{
+      axios.post(`${this.apphost}/xoxo/reg_img/crear`, f)
+      .then(()=>{
 
-        axios.post(`${this.apphost}/xoxo/reg_img/crear`, f)
-        .then(()=>{
+        $('#modalSubirImagen').modal('hide');
+        this.verImagenes(this.itemActual);
 
-          $('#modalSubirImagen').modal('hide');
-          this.verImagenes(this.itemActual);
-
-        })
-        .catch(()=>{
-          apprise('Error al subir imagen');
-        })
-        .finally(()=>$.unblockUI());
-
-      },50);
+      })
+      .finally(()=>$.unblockUI());
     },
 
     /* VIDEO */

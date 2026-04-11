@@ -391,21 +391,32 @@ Flight::route('GET /proyectos', function () {
     // 🔥 PROYECTOS DESDE DB
     // =========================
     $imagenes = DB::query("
-        SELECT url_img
-        FROM reg_pag_item_img
-        ORDER BY orden ASC
+        SELECT 
+            img.pag_item_img_id,
+            img.url_img,
+            img.titulo AS img_titulo,
+            img.descripcion AS img_descripcion,
+
+            i.titulo AS item_titulo,
+            i.subtitulo_detalle AS item_descripcion
+
+        FROM reg_pag_item_img img
+        INNER JOIN reg_item_pag_web i 
+            ON i.item_pag_web_id = img.item_pag_web_id
+        ORDER BY img.orden ASC
     ");
 
-    // =========================
-    // 🔥 MAPEAR A FORMATO MUSTACHE
-    // =========================
     $items = array_map(function($img){
 
         return [
             'full' => $img['url_img'],
-            'thumb' => $img['url_img'], // puedes cambiar luego por thumbnails
-            'titulo' => 'Proyecto Regentis',
-            'descripcion' => 'Desarrollo web profesional',
+            'thumb' => $img['url_img'],
+
+            // 🔥 USA PRIMERO IMG
+            'titulo' => $img['img_titulo'] ?: $img['item_titulo'],
+
+            'descripcion' => $img['img_descripcion'] ?: $img['item_descripcion'],
+
             'position' => 'center center'
         ];
 

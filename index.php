@@ -7,7 +7,7 @@ date_default_timezone_set('America/Lima');
 define('VARPATH', dirname(__FILE__));
 define ('DEFINITION', VARPATH . "/app/definition.php");
 
-$version=3;
+$version=4;
 
 require_once VARPATH."/classes/Meekrodb2.class.php";
 require_once VARPATH."/classes/perso.class.php";
