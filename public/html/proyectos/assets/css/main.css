@@ -1470,7 +1470,7 @@ input, select, textarea {
 .marquee{
   display:inline-block;
   white-space:nowrap;
-  animation: marqueeLoop 12s linear infinite;
+  animation: marqueeLoop 40s linear infinite;
 }
 
 /* 🔥 ANIMACIÓN CONTINUA */

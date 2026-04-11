@@ -284,6 +284,11 @@
           <i class="fa fa-pencil"></i>
         </button>
 
+        <button class="btn btn-info btn-mini"
+                @click="verImagenPreview(img)">
+          <i class="fa fa-eye"></i>
+        </button>
+
       </div>
 
     </div>
@@ -297,6 +302,18 @@
     <button class="btn btn-success" @click="abrirSubirImagen">Subir imagen</button>
     <button class="btn" data-dismiss="modal">Cerrar</button>
   </div>
+</div>
+
+<div v-if="previewImagen" class="modal-preview" @click="cerrarPreview">
+
+  <div class="modal-preview-content" @click.stop>
+
+    <span class="cerrar" @click="cerrarPreview">✕</span>
+
+    <img :src="previewImagen.url_img">
+
+  </div>
+
 </div>
 
 
@@ -601,7 +618,7 @@
   content: attr(data-text);
   position:absolute;
   white-space:nowrap;
-  animation: scrollText 6s linear infinite;
+  animation: scrollText 20s linear infinite;
 }
 
 /* 🔥 TITULO (amarillo) */
@@ -621,6 +638,55 @@
 @keyframes scrollText{
   0% { transform: translateX(100%); }
   100% { transform: translateX(-100%); }
+}
+
+/* MODAL CSS */
+.modal-preview{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background: rgba(0,0,0,0.85);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-preview-content{
+  position:relative;
+  max-width:90%;
+  max-height:90%;
+  animation: zoomIn 0.3s ease;
+}
+
+.modal-preview-content img{
+  width:100%;
+  height:auto;
+  border-radius:10px;
+  box-shadow:0 10px 40px rgba(0,0,0,0.5);
+}
+
+.cerrar{
+  position:absolute;
+  top:-30px;
+  right:-10px;
+  font-size:30px;
+  color:#fff;
+  cursor:pointer;
+}
+
+/* animaciones */
+@keyframes fadeIn{
+  from{opacity:0}
+  to{opacity:1}
+}
+
+@keyframes zoomIn{
+  from{transform:scale(0.8)}
+  to{transform:scale(1)}
 }
 </style>
 
@@ -661,6 +727,8 @@ new Vue({
       pag_item_vid_id:null,
       titulo:''
     },
+
+    previewImagen:null,
 
     items:[],
     urlImagenPegar:'',
@@ -809,6 +877,14 @@ new Vue({
         $('#modalEditarImagen').modal('show');
       },200);
 
+    },
+
+    verImagenPreview(img){
+      this.previewImagen = img;
+    },
+
+    cerrarPreview(){
+      this.previewImagen = null;
     },
 
     guardarEditarImagen(){
