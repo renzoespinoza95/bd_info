@@ -430,6 +430,13 @@ Flight::route('GET /proyectos', function () {
         'favicon' => $varhost . '/public/ico/favicon.png',
         'base' => $base ?? '',
         'header' => $header,
+
+        // 🔥 META TAGS DINÁMICOS
+        'meta_keywords' => vari("meta_keywords"),
+        'meta_description' => vari("meta_description"),
+        'meta_author' => vari("meta_author"),
+
+
         'items' => $items,
         'footer' => [
             'copyright' => 'Regentis',
