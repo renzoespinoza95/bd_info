@@ -103,6 +103,7 @@ public static function global_env($apphost, $varhost, $adicional = null) {
 $aplicar = <<<EOF
 <script type="text/javascript">
    let apphost = '$apphost';  
+   let url_flask = '$url_flask';  
    let varhost = '$varhost';
    let cdn_base_url = '$bunny_storage_url';
    $adicional

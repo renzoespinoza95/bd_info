@@ -1667,7 +1667,7 @@ new Vue({
         f.append('file', blob, 'img.jpg');
 
         // 👉 enviar a Flask
-        const res = await axios.post($url_flask . '/tk_guardar_img', f);
+        const res = await axios.post(url_flask + '/tk_guardar_img', f);
 
         const job_id = res.data.job_id;
 
