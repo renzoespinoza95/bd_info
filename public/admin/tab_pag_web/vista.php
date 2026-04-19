@@ -1239,6 +1239,40 @@ new Vue({
 
     },
 
+    procesarImagen(file) {
+      return new Promise((resolve) => {
+
+        const img = new Image()
+        const reader = new FileReader()
+
+        reader.onload = (e) => {
+          img.src = e.target.result
+        }
+
+        img.onload = () => {
+
+          const canvas = document.createElement('canvas')
+
+          const MAX_WIDTH = 1000
+          const scale = MAX_WIDTH / img.width
+
+          canvas.width = MAX_WIDTH
+          canvas.height = img.height * scale
+
+          const ctx = canvas.getContext('2d')
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+
+          canvas.toBlob(
+            (blob) => resolve(blob),
+            'image/jpeg',
+            0.7 // 🔥 calidad
+          )
+        }
+
+        reader.readAsDataURL(file)
+      })
+    },
+
     verVideos(id){
 
       this.itemActual = id
@@ -1614,7 +1648,7 @@ new Vue({
 
     previewImg(e){
       this.preview=URL.createObjectURL(e.target.files[0])
-    },
+    },    
 
     guardarImagen(){
 
@@ -1624,24 +1658,61 @@ new Vue({
         return apprise('Selecciona una imagen');
       }
 
-      let f = new FormData();
-      f.append('file', file);
-      f.append('item', this.itemActual);
+      this.bloquear('Procesando imagen...');
 
-      // 🔥 NUEVO
-      f.append('titulo', this.imgForm.titulo || '');
-      f.append('descripcion', this.imgForm.descripcion || '');
+      // 🔥 PROCESAR EN CLIENTE
+      this.procesarImagen(file).then(async (blob)=>{
 
-      this.bloquear('Subiendo imagen...');
+        let f = new FormData();
+        f.append('file', blob, 'img.jpg');
 
-      axios.post(`${this.apphost}/xoxo/reg_img/crear`, f)
-      .then(()=>{
+        // 👉 enviar a Flask
+        const res = await axios.post('http://172.28.81.231:8080/tk_guardar_img', f);
+
+        const job_id = res.data.job_id;
+
+        // polling igual que antes...
+        let intentos = 0;
+
+        const esperar = async () => {
+          while(intentos < 30){
+
+            const r = await axios.get('http://172.28.81.231:8080/jobs/result',{
+              params:{ job_id }
+            });
+
+            if(r.data.status === 'finished'){
+              return r.data.result;
+            }
+
+            await new Promise(r=>setTimeout(r,1500));
+            intentos++;
+          }
+        };
+
+        const result = await esperar();
+
+        // 👉 enviar a PHP
+        await axios.post(`${this.apphost}/xoxo/reg_img/crear`,{
+          item: this.itemActual,
+          url: result.url,
+          titulo: this.imgForm.titulo,
+          descripcion: this.imgForm.descripcion
+        });
 
         $('#modalSubirImagen').modal('hide');
-        this.verImagenes(this.itemActual);
+
+        setTimeout(()=>{
+          this.verImagenes(this.itemActual);
+        }, 200);
 
       })
-      .finally(()=>$.unblockUI());
+      .catch(()=>{
+        apprise('Error procesando imagen');
+      })
+      .finally(()=>{
+        $.unblockUI();
+      });
     },
 
     /* VIDEO */
@@ -1666,6 +1737,22 @@ new Vue({
     previewVideo(){
       $('#previewVideo').html(this.videoForm.codigo)
     },
+
+    async cargarImagenes(){
+
+      try{
+
+        const res = await axios.get(`${this.apphost}/xoxo/reg_img/listar`,{
+          params:{ id: this.itemActual }
+        });
+
+        this.imagenes = res.data.data || [];
+
+      }catch(e){
+        console.error(e);
+      }
+
+    },    
 
     guardarVideo(){
 

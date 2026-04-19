@@ -260,53 +260,60 @@ Flight::route('GET /xoxo/reg_img/listar', function(){
 Flight::route('POST /xoxo/reg_img/crear', function(){
 
     include DEFINITION;
-    autentificar_administrador();
 
-    $item = $_POST['item'] ?? null;
+    try{       
 
-    if (!$item) {
-        Flight::json(['status'=>'error','msg'=>'item requerido']);
-        return;
-    }
+        // 🔥 LEER JSON (porque axios envía JSON, no form-data)
+        $data = json_decode(file_get_contents("php://input"), true);
 
-    if (empty($_FILES['file']['tmp_name'])) {
-        Flight::json(['status'=>'error','msg'=>'archivo requerido']);
-        return;
-    }
+        $item = $data['item'] ?? null;
+        $url  = trim($data['url'] ?? '');
+        $titulo = trim($data['titulo'] ?? '');
+        $descripcion = trim($data['descripcion'] ?? '');
 
-    try {
-
-        // 🔥 1. REDIMENSIONAR
-        $jpgPath = resizeTo800Jpg($_FILES['file']['tmp_name']);
-
-        if (!file_exists($jpgPath)) {
-            throw new Exception('Error al generar imagen');
+        // 🔥 VALIDACIONES
+        if (!$item) {
+            Flight::json([
+                'status' => 'error',
+                'msg' => 'item requerido'
+            ]);
+            return;
         }
 
-        // 🔥 2. NOMBRE
-        $filename = 'img_' . date('Ymd_His') . '_' . rand(1000,9999) . '.jpg';
-
-        // 🔥 3. SUBIR A BUNNY
-        if (!bunnyUpload($jpgPath, $filename)) {
-            throw new Exception('Error al subir a Bunny');
+        if (empty($url)) {
+            Flight::json([
+                'status' => 'error',
+                'msg' => 'url requerido'
+            ]);
+            return;
         }
 
-        // 🔥 4. URL COMPLETA
-        $url = rtrim(BUNNY_CDN_BASE, '/') . '/' . SLIDER_DIR . '/' . $filename;
-
-        // 🔥 5. GUARDAR
+        // 🔥 INSERT DIRECTO (SIN PROCESAR IMAGEN)
         DB::insert('reg_pag_item_img', [
             'item_pag_web_id' => $item,
             'url_img' => $url,
-            'titulo' => $_POST['titulo'] ?? '',
-            'descripcion' => $_POST['descripcion'] ?? ''
+            'titulo' => $titulo,
+            'descripcion' => $descripcion,
+            'is_visible' => 1,
+            'orden' => 0
         ]);
 
-        Flight::json(['status'=>'ok','url'=>$url]);
+        // 🔥 RESPUESTA OK
+        Flight::json([
+            'status' => 'ok',
+            'msg' => 'Imagen guardada correctamente',
+            'url' => $url
+        ]);
 
-    } catch(Exception $e){
-        Flight::json(['status'=>'error','msg'=>$e->getMessage()]);
+    }catch(Exception $e){
+
+        Flight::json([
+            'status' => 'error',
+            'msg' => $e->getMessage()
+        ]);
+
     }
+
 });
 
 Flight::route('POST /xoxo/reg_img/eliminar', function(){

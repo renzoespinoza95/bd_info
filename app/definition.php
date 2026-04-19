@@ -20,5 +20,6 @@
   global $pag_web_neg_id;
   global $base;  
   global $version;
+  global $url_flask;
 
   
