@@ -1677,7 +1677,7 @@ new Vue({
         const esperar = async () => {
           while(intentos < 30){
 
-            const r = await axios.get('http://172.28.81.231:8080/jobs/result',{
+            const r = await axios.get(url_flask + '/jobs/result',{
               params:{ job_id }
             });
 
