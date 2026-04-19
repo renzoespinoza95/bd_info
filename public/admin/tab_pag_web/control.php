@@ -1,5 +1,28 @@
 <?php
 
+function bunnyDeleteImgPagWeb(string $fileOrUrl): bool {
+
+    // Si viene URL completa, extraer solo el filename
+    $filename = basename($fileOrUrl);
+
+    $url = BUNNY_STORAGE_URL . '/' . BUNNY_DIR_FOTOS_WEB . '/' . $filename;
+
+    $headers = [
+        "AccessKey: " . BUNNY_STORAGE_ACCESSKEY
+    ];
+
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+    curl_exec($ch);
+    $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    return ($status == 200 || $status == 204);
+}
+
 function generar_url_amigable($texto){
 
     // pasar a minúsculas
@@ -337,7 +360,7 @@ Flight::route('POST /xoxo/reg_img/eliminar', function(){
     );
 
     if ($row && !empty($row['url_img'])) {
-        bunnyDelete($row['url_img']);
+        bunnyDeleteImgPagWeb($row['url_img']);
     }
 
     DB::delete('reg_pag_item_img',"pag_item_img_id=%i",$id);
