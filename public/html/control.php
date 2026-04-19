@@ -7,6 +7,7 @@ Flight::route('GET /', function () {
 
     include DEFINITION;
     visita();
+    diario("2", 'visita_pag_web', null);
     $mis_visitas = vari("visitas");
 
     // =========================
@@ -372,6 +373,7 @@ Flight::route('GET /proyectos', function () {
     include DEFINITION;
 
     visita("visita_portafolio");
+    diario("2", 'visita_portafolio', null);
 
     // =========================
     // 🔥 HEADER DATA

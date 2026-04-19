@@ -251,3 +251,72 @@ function visita($nombre = 'visitas') {
 
 }
 
+
+function diario($usu_id, $accion, $extra_data = null) {
+
+    // plantilla base
+    $plantilla = obtenerDescripcionAccion($accion);
+
+    // descripción final
+    $descripcion_final = armarDescripcionFinal(
+        $plantilla, 
+        $usu_id, 
+        is_array($extra_data) ? $extra_data : []
+    );
+
+    // 👇 aquí está la clave
+    $extra_data_json = is_null($extra_data) 
+        ? null 
+        : json_encode($extra_data);
+
+    DB::insert('reg_usuxreg', [
+        'usu_id'         => intval($usu_id),
+        'accion'         => $accion,
+        'descripcion'    => $descripcion_final,
+        'extra_data'     => $extra_data_json,
+        // puedes omitir fecha si usas DEFAULT CURRENT_TIMESTAMP
+    ]);
+}
+
+function obtenerDescripcionAccion($accion) {
+    $row = DB::queryFirstRow(
+        "SELECT descripcion FROM regdesc WHERE accion = %s",
+        $accion
+    );
+    return $row ? $row['descripcion'] : '';
+}
+
+function armarDescripcionFinal($plantilla, $usu_id, $extra_data) {
+
+    // --- 1) Usuario ---
+    $usu = DB::queryFirstRow("
+        SELECT sobrenombre 
+        FROM reg_usu 
+        WHERE usu_id=%i
+    ", $usu_id);
+
+    $nom_usu = $usu ? '@' . $usu['sobrenombre'] : '@usuario';
+
+    // --- 2) Negocio ---
+    $nom_neg = '@negocio';
+    if (isset($extra_data['neg_id_dest'])) {
+        $neg_id = intval($extra_data['neg_id_dest']);
+
+        $r = DB::queryFirstRow("
+            SELECT nombre 
+            FROM reg_neg 
+            WHERE neg_id=%i
+        ", $neg_id);
+
+        if ($r) $nom_neg = '@' . $r['nombre'];
+    }
+
+    // --- 3) Reemplazo ---
+    $final = str_replace(
+        ['{nom_usu}', '{nom_neg}'],
+        [$nom_usu, $nom_neg],
+        $plantilla
+    );
+
+    return $final;
+}
