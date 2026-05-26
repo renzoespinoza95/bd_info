@@ -336,17 +336,8 @@ Flight::route('GET /item/@slug', function ($slug) {
         ? $imagenes[0]['url_img'] 
         : 'https://picsum.photos/1200/500';
 
-    $data['imagenes'] = array_map(function($img){
-        return [
-            'url_img' => $img['url_img']
-        ];
-    }, $imagenes);
 
-    $data['logotipos'] = array_map(function($l){
-        return [
-            'url_img' => $l['url_img']
-        ];
-    }, $logotipos);
+
 
     // =========================
     // 🔥 RENDER
@@ -354,8 +345,7 @@ Flight::route('GET /item/@slug', function ($slug) {
     $partials = [
         'head' => file_get_contents(VARPATH . '/public/html/template/components/head.html'),
         'footer' => file_get_contents(VARPATH . '/public/html/template/components/footer.html'),
-        'scripts' => file_get_contents(VARPATH . '/public/html/template/components/scripts.html'),
-        'logotipos' => file_get_contents(VARPATH . '/public/html/template/comp_detalle/logotipos.html'),
+        'scripts' => file_get_contents(VARPATH . '/public/html/template/components/scripts.html')
     ];
 
     echo (new Mustache)->render(

@@ -1,0 +1,76 @@
+<!DOCTYPE HTML>
+<html>
+
+{{> head}}
+
+<body class="is-preload">
+
+    <!-- Page Wrapper -->
+    <div id="page-wrapper">
+
+        <!-- Wrapper -->
+        <div id="wrapper">
+
+            <!-- Panel -->
+            <section class="panel banner right">
+
+                <!-- CONTENT -->
+                <div class="content color0 span-3-75">
+
+                    <h1 class="major">
+                        {{titulo}}
+                    </h1>
+
+                    <!-- SCROLL -->
+                    <div
+                        style="
+                            max-height: 55vh;
+                            overflow-y: auto;
+                            overflow-x: hidden;
+                            padding-right: 14px;
+                        "
+                    >
+
+                        {{{contenido}}}
+
+                    </div>
+
+                    <ul class="actions">
+                        <li>
+                            <a
+                                href="{{url_inicio}}"
+                                class="button primary color1 circle icon solid fa-angle-left"
+                            >
+                                Inicio
+                            </a>
+                        </li>
+                    </ul>
+
+                </div>
+
+                <!-- IMAGE -->
+                <div
+                    class="image filtered span-3-25"
+                    data-position="center center"
+                >
+
+                    <img
+                        src="{{imagen_principal}}"
+                        alt="{{titulo}}"
+                    />
+
+                </div>
+
+            </section>
+
+            {{> footer}}
+
+        </div>
+
+    </div>
+
+    {{> scripts}}
+
+</body>
+
+</html>
