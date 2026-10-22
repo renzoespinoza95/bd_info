@@ -370,7 +370,7 @@ Flight::route('GET /proyectos', function () {
     // =========================
     $header = [
         'titulo' => 'Portafolio Regentis',        
-        'descripcion' => 'Explora nuestros proyectos más destacados',
+        'descripcion' => 'Explora mis proyectos más destacados',
         'icons' => [
             ['url'=>'#','icon'=>'brands fa-twitter','label'=>'Twitter'],
             ['url'=>'#','icon'=>'brands fa-instagram','label'=>'Instagram'],
