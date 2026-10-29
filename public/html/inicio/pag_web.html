@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+{{> head}}
+<body class="d-flex flex-column min-vh-100">
+
+    {{> navbar_items}}
+
+    <!-- Main Content Layout -->
+    <main class="container my-auto py-4">
+        <div class="row align-items-center justify-content-center g-4">
+            
+            <!-- Left Info Panel -->
+            <div class="col-lg-5 col-md-10">
+                <div class="card border-0 shadow-lg p-4 p-md-5 info-card text-white">
+                    <h2 class="display-6 fw-bold mb-3">{{{header.titulo}}}</h2>
+                    <hr class="divider-line my-3">
+                    <p class="lead opacity-90 mb-4">
+                        {{{header.descripcion}}}
+                    </p>
+                    {{#contenido_inicio}}
+                    <div class="mb-4 text-white-50 fs-7">
+                        {{{contenido_inicio}}}
+                    </div>
+                    {{/contenido_inicio}}
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="counter-box px-3 py-2 rounded-3 text-center">
+                            <small class="d-block text-uppercase opacity-75 fs-7">Visitas</small>
+                            <span id="swipe-counter" class="fw-bold fs-5">{{visitas}}</span>
+                        </div>
+                        <p class="mb-0 text-white-50 fs-7">
+                            Usa tu dedo en pantallas táctiles o arrastra con el ratón.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Swipe Deck Panel / Thumbnails y Controles -->
+            <div class="col-lg-5 col-md-10 d-flex flex-column align-items-center">
+                <div class="swipe-container mb-4">
+                    {{> thumbnails}}
+                </div>
+
+                <!-- Botones de Control -->
+                <div class="d-flex gap-3 align-items-center justify-content-center controls-bar">
+                    <!-- Flecha izquierda (Deslizar izquierda) -->
+                    <button id="btn-dislike" class="btn btn-action btn-dislike shadow" title="Anterior">
+                        <i class="bi bi-arrow-left"></i>
+                    </button>
+                    <!-- Corazón rojo con icono blanco (Abre Modal Fullscreen) -->
+                    <button id="btn-reload" class="btn btn-action shadow-sm text-white" style="background-color: #dc3545;" title="Ver imagen completa">
+                        <i class="bi bi-heart-fill"></i>
+                    </button>
+                    <!-- Flecha derecha (Blanco, deslizar derecha) -->
+                    <button id="btn-like" class="btn btn-action shadow bg-white text-dark" title="Siguiente">
+                        <i class="bi bi-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Modal Full Screen para la Imagen -->
+    <div class="modal fade" id="modalFullScreen" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content bg-dark border-0">
+                <div class="modal-header border-0 position-absolute top-0 end-0 z-3 p-4">
+                    <button type="button" class="btn-close btn-close-white fs-4 bg-black bg-opacity-50 rounded-circle p-3" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body d-flex flex-column align-items-center justify-content-center p-0">
+                    <img id="modal-img-preview" src="" alt="Imagen Ampliada" class="img-fluid h-100 w-100 object-fit-contain">
+                    <div id="modal-title-preview" class="position-absolute bottom-0 start-50 translate-middle-x mb-4 text-white bg-black bg-opacity-75 px-4 py-2 rounded-pill fs-5 fw-bold"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{> modal_nosotros}}
+    {{> modal_clientes}}
+
+    <!-- Footer -->
+    <footer class="py-3 text-center text-white-50 fs-7 mt-auto">
+        &copy; 2026 {{footer.copyright}}. {{footer.extra}}
+    </footer>
+
+    {{> scripts}}
+</body>
+</html>

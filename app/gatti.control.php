@@ -14,7 +14,7 @@ if (!empty($ssa_id) && is_string($ssa_id)) {
 			require_once VARPATH."/classes/JWT.class.php";
 			require_once VARPATH. "/classes/SimpleImage.class.php";
 			require_once VARPATH."/classes/WkHtmlToPdf.php";
-			require_once VARPATH."/public/html/control.php";
+			//require_once VARPATH."/public/html/control.php";
 	        break;
 
 	    case 'NEGOCIO':	        
@@ -29,5 +29,5 @@ if (!empty($ssa_id) && is_string($ssa_id)) {
 	}
 }
 
-require_once VARPATH."/public/html/control.php";
 require_once VARPATH."/public/admin/login/app.php";
+require_once VARPATH."/public/html/inicio/control.php";
