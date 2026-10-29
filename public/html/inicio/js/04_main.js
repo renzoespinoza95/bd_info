@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
     const cardDeck = document.getElementById('thumbnails');
-    const btnLike = document.getElementById('btn-like');     // Flecha derecha (Blanco)
-    const btnDislike = document.getElementById('btn-dislike'); // Flecha izquierda
-    const btnReload = document.getElementById('btn-reload');   // Corazón rojo (Modal Fullscreen)
+    const btnLike = document.getElementById('btn-like');     
+    const btnDislike = document.getElementById('btn-dislike'); 
+    const btnReload = document.getElementById('btn-reload');   
     
     if (!cardDeck) return;
 
@@ -12,9 +12,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const cards = cardDeck.querySelectorAll('.swipe-card');
         const totalCards = cards.length;
         cards.forEach((card, index) => {
-            const scale = 1 - (totalCards - 1 - index) * 0.03;
-            const translateY = (totalCards - 1 - index) * 8;
-            card.style.transform = `scale(${scale}) translateY(${translateY}px)`;
+            // Mantiene el tamaño inicial fijo (scale(1)) para todas las tarjetas apiladas sin reducirse
+            const translateY = (totalCards - 1 - index) * 6;
+            card.style.transform = `scale(1) translateY(${translateY}px)`;
             card.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
             card.style.opacity = '1';
         });
@@ -27,7 +27,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function setupTopCardListeners() {
         const cards = cardDeck.querySelectorAll('.swipe-card');
         if (cards.length === 0) {
-            // Carrusel infinito: reinicia el mazo automáticamente
             cardDeck.innerHTML = originalCardsHTML;
             initCardStyles();
             setupTopCardListeners();
@@ -74,8 +73,9 @@ document.addEventListener('DOMContentLoaded', () => {
         currentX = clientX - startX;
         currentY = clientY - startY;
 
-        const rotate = currentX * 0.08;
-        activeCard.style.transform = `translate(${currentX}px, ${currentY}px) rotate(${rotate}deg)`;
+        const rotate = currentX * 0.05;
+        // Se mantiene estrictamente scale(1) para evitar cualquier reducción de tamaño al mover a la izquierda o derecha
+        activeCard.style.transform = `translate(${currentX}px, ${currentY}px) scale(1) rotate(${rotate}deg)`;
     }
 
     function onEnd() {
@@ -84,14 +84,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         activeCard.classList.remove('swiping');
 
-        const threshold = 120;
+        const threshold = 100;
 
         if (currentX > threshold) {
             completeSwipe('right');
         } else if (currentX < -threshold) {
             completeSwipe('left');
         } else {
-            activeCard.style.transform = 'translate(0px, 0px) rotate(0deg)';
+            activeCard.style.transform = 'translate(0px, 0px) scale(1) rotate(0deg)';
         }
 
         document.removeEventListener('mousemove', onMove);
@@ -107,13 +107,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!activeCard) return;
 
         const flyX = direction === 'right' ? window.innerWidth : -window.innerWidth;
-        const rotate = direction === 'right' ? 25 : -25;
+        const rotate = direction === 'right' ? 20 : -20;
 
         activeCard.style.transition = 'transform 0.4s ease-out, opacity 0.3s ease-out';
-        activeCard.style.transform = `translate(${flyX}px, ${currentY}px) rotate(${rotate}deg)`;
+        activeCard.style.transform = `translate(${flyX}px, ${currentY}px) scale(1) rotate(${rotate}deg)`;
         activeCard.style.opacity = '0';
-
-        // NOTA: El contador de visitas ya no se incrementa al hacer swipe.
 
         const targetCard = activeCard;
         activeCard = null;
@@ -124,7 +122,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 300);
     }
 
-    // Controles de botones inferiores
     if (btnDislike) {
         btnDislike.addEventListener('click', () => {
             if (activeCard) completeSwipe('left');
@@ -137,7 +134,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Botón Corazón Rojo: Abre ventana modal full screen con la imagen del card actual
     if (btnReload) {
         btnReload.addEventListener('click', () => {
             if (!activeCard) {
