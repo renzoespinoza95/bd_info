@@ -11,15 +11,19 @@
   global $apikey_openai;
   global $apiKey;
   
-  global $wkh_pdf;  
+  global $wkh_pdf;
   global $host;
   global $username;
   global $password;
   global $dbname;
   global $secreto_jwt;
-  global $pag_web_neg_id;
-  global $base;  
   global $version;
+  global $fenix_key;
+  global $varhost_tmp;
+  global $varpath_tmp;
+  global $varhost_img;
+  global $varpath_img;
   global $url_flask;
+
 
   

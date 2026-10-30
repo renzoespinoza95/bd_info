@@ -103,8 +103,8 @@ public static function global_env($apphost, $varhost, $adicional = null) {
 $aplicar = <<<EOF
 <script type="text/javascript">
    let apphost = '$apphost';  
-   let url_flask = '$url_flask';  
    let varhost = '$varhost';
+   let url_flask = '$url_flask';
    let cdn_base_url = '$bunny_storage_url';
    $adicional
    let dt_language = {
@@ -196,9 +196,9 @@ public static function preparar_para_encriptar($string) {
 
   public static function perso($version = null)
   {
-  com("PERSO");
-  css(self::$boot . "/perso/perso.css?version=" . $version);
-  js(self::$boot . "/perso/perso.js?version=" . $version);
+    com("PERSO");
+    css(self::$boot . "/perso/perso.css?version=" . $version);
+    js(self::$boot . "/perso/perso.js?version=" . $version);
   }
 
   public static function datatables()
@@ -211,8 +211,8 @@ public static function preparar_para_encriptar($string) {
 
   public static function summernote() {
       com("summernote");
-      js(self::$boot . "/summernote/summernote-lite.min.js");
-      css(self::$boot . "/summernote/summernote-lite.min.css");
+      js(self::$boot . "/summernote/summernote-lite.js");
+      css(self::$boot . "/summernote/summernote-lite.css");
       n();      
   }  
 

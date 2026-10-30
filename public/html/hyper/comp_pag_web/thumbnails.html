@@ -1,0 +1,27 @@
+<!-- Slide 1: Cover -->
+<section class="slide s-ink active" data-slide="0">
+  <div class="inner scrollable">
+    <div class="wrap cover">
+      <span class="kicker hl-lime" data-reveal>{{cover_kicker}}</span>
+      <h1 class="huge" data-reveal>{{cover_title}}</h1>
+      <p class="lead" data-reveal>{{cover_subtitle}}</p>
+      <div class="btnrow" data-reveal>
+        <a class="btn fill" href="#" data-goto="2">Hear The Music</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Slide 7: Gallery (Press Photos) -->
+<section class="slide s-orange" data-slide="6">
+  <div class="inner scrollable">
+    <div class="wrap">
+      <h2 class="big" data-reveal>Press Photos</h2>
+      <div class="gal-strip" id="galStrip" data-reveal>
+        {{#gallery}}
+          {{> item}}
+        {{/gallery}}
+      </div>
+    </div>
+  </div>
+</section>
