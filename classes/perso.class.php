@@ -231,6 +231,39 @@ public static function mostrar_palabra_latina($texto) {
     }
     return iconv("CP1252", "UTF-8", $texto);
 }
+
+public static function visita($nombre = 'visitas') {
+
+    // 🔥 Asegurar charset
+    DB::query("SET NAMES 'utf8mb4'");
+
+    // 🔥 Incrementar variable dinámica
+    DB::query("
+        UPDATE reg_vari 
+        SET valor = IFNULL(valor,0) + 1
+        WHERE nombre = %s
+    ", $nombre);
+
+}
+
+public static function vari($nombre_variable)
+{
+
+$query = <<<EOF
+SELECT * FROM reg_vari WHERE nombre = '$nombre_variable'
+EOF;
+
+$res = DB::queryFirstRow($query);
+$vari = $res['valor'];    
+
+
+if($vari == "") {;
+echo "NO EXISTE: $nombre_variable";
+exit;
+}
+return $vari;
+
+}
   
 // +++++++++++++
 // | END PERSO |

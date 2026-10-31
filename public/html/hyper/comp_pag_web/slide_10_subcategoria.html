@@ -1,0 +1,80 @@
+<section class="slide s-orange" data-slide="9">
+    <div class="inner scrollable">
+      <div class="wrap">
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:14px;flex-wrap:wrap" data-reveal>
+          <div>
+            <span class="kicker">MIS TRABAJOS</span>
+            <h2 class="big" id="subcatDetailTitle" style="margin-top:6px">{{subcat_titulo}}</h2>
+          </div>
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+            <button class="menu-btn" id="openSubcatModal" style="background:var(--lime); color:var(--ink); border:3px solid var(--ink); box-shadow:4px 4px 0 var(--ink); font-family:var(--font-pixel); font-size:18px; padding:8px 16px;">
+              TIPOS DE DISEÑOS +
+            </button>
+            <a class="btn" href="{{url_whatsapp}}" target="_blank" rel="noopener noreferrer">Solicitar información</a>
+          </div>
+        </div>
+        
+        <!-- Carrusel con Flechas Laterales y Soporte Táctil -->
+        <div style="position: relative; margin-top: 14px;" data-reveal data-noswipe>
+          <button id="carouselPrev" aria-label="Anterior" style="position: absolute; left: -20px; top: 45%; transform: translateY(-50%); z-index: 10; background: var(--lime); color: var(--ink); border: 3px solid var(--ink); width: 45px; height: 45px; font-family: var(--font-pixel); font-size: 20px; cursor: pointer; box-shadow: 3px 3px 0 var(--ink); display: flex; align-items: center; justify-content: center;">&larr;</button>
+          <button id="carouselNext" aria-label="Siguiente" style="position: absolute; right: -20px; top: 45%; transform: translateY(-50%); z-index: 10; background: var(--lime); color: var(--ink); border: 3px solid var(--ink); width: 45px; height: 45px; font-family: var(--font-pixel); font-size: 20px; cursor: pointer; box-shadow: 3px 3px 0 var(--ink); display: flex; align-items: center; justify-content: center;">&rarr;</button>
+
+          <div class="gal-strip" id="galSubStrip" style="display: flex; gap: 20px; overflow-x: auto; scroll-behavior: smooth; scroll-snap-type: x mandatory; padding-bottom: 10px; -webkit-overflow-scrolling: touch;">
+            {{#subcat_items}}
+            <figure class="shot" style="flex: 0 0 calc(50% - 10px); min-width: 280px; scroll-snap-align: start; position: relative; overflow: hidden; border: 3px solid var(--ink); background: var(--ink-2); box-shadow: 4px 4px 0 var(--ink); aspect-ratio: 4/3;">
+              <img src="{{img}}" alt="{{titulo}}" loading="lazy" style="display:block; width:100%; height:100%; object-fit:cover;">
+              
+              <div class="shot-overlay" style="position:absolute; inset:0; background:rgba(11,11,25,0.88); display:flex; flex-direction:column; justify-content:center; align-items:center; gap:10px; padding:15px; opacity:0; transition:opacity 0.3s ease;">
+                <span style="font-family:var(--font-display); font-size:18px; color:var(--lime); text-transform:uppercase; text-align:center;">{{titulo}}</span>
+                
+                {{#tiene_videos}}
+                  {{#videos}}
+                  <button class="btn fill btn-visualizar-vimeo" data-vimeo-code="{{codigo_web}}" style="background:var(--lime); color:var(--ink); border:2px solid var(--ink); box-shadow:3px 3px 0 var(--orange); font-family:var(--font-pixel); font-size:14px; padding:8px 14px; cursor:pointer; width:100%; text-align:center;">
+                    {{titulo}} &rarr;
+                  </button>
+                  {{/videos}}
+                {{/tiene_videos}}
+                {{^tiene_videos}}
+                  <span style="font-family:var(--font-body); font-size:14px; color:#fff; text-align:center;">Sin videos disponibles</span>
+                {{/tiene_videos}}
+              </div>
+              
+              <figcaption class="cap" style="position:absolute; bottom:0; left:0; right:0; background:rgba(11,11,25,0.85); color:#fff; padding:8px 12px; font-family:var(--font-display); font-size:15px;">{{titulo}}</figcaption>
+            </figure>
+            {{/subcat_items}}
+            {{^subcat_items}}
+            <figure class="shot" style="flex:0 0 100%; border:3px solid var(--ink); background:var(--ink-2);">
+              <img src="https://picsum.photos/seed/subdefault/600/800" alt="Sin imágenes" loading="lazy">
+              <figcaption class="cap">Sin registros</figcaption>
+            </figure>
+            {{/subcat_items}}
+          </div>
+        </div>
+        
+        <div class="mono" id="subcatDetailDesc" data-reveal style="margin-top:12px;color:var(--ink); font-size:16px; line-height:1.5;">
+          {{{subcat_texto02}}}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modal con Reproductor de Vimeo a Pantalla Completa -->
+  <div id="imageModal" aria-hidden="true" style="display:none; position:fixed; inset:0; z-index:120; background:rgba(11,11,25,0.95); justify-content:center; align-items:center; padding:30px;">
+    <button id="closeImageModal" aria-label="Cerrar reproductor" style="position:absolute; top:25px; right:25px; background:var(--lime); color:var(--ink); border:3px solid var(--ink); box-shadow:4px 4px 0 var(--orange); font-family:var(--font-pixel); font-size:22px; padding:6px 18px; cursor:pointer; z-index:125;">CERRAR &#10005;</button>
+    <div id="vimeoContainer" style="width:100%; max-width:1000px; aspect-ratio:16/9; border:4px solid var(--lime); box-shadow:8px 8px 0 var(--orange); background:#000;">
+    </div>
+  </div>
+
+<style>
+  .shot:hover .shot-overlay,
+  .shot.active-touch .shot-overlay {
+    opacity: 1 !important;
+  }
+  #galSubStrip::-webkit-scrollbar {
+    display: none;
+  }
+  #galSubStrip {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+</style>

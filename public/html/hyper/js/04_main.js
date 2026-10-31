@@ -21,6 +21,9 @@ import { initGallery, fillMarquees } from './03_cards.js';
   const rootCS = getComputedStyle(document.documentElement);
   const BGVAR = { "s-ink": "--ink", "s-orange": "--orange", "s-lime": "--lime", "s-bone": "--bone" };
 
+  // Definir las slides permitidas según el menú nav_pop (Presentación: 0, Nosotros: 1)
+  const allowedSlides = [0, 1];
+
   function slideColor(slide) {
     if (!slide || !slide.classList) return "#0B0B0B";
     const key = ["s-ink", "s-orange", "s-lime", "s-bone"].find(c => slide.classList.contains(c)) || "s-ink";
@@ -108,8 +111,26 @@ import { initGallery, fillMarquees } from './03_cards.js';
     setTimeout(finish, outDone + BG_GAP + inDone);
   }
 
-  function next() { if (appState.currentSlide < total - 1) goTo(appState.currentSlide + 1); }
-  function prev() { if (appState.currentSlide > 0) goTo(appState.currentSlide - 1); }
+  // Navegación circular estricta basada exclusivamente en las opciones del menú nav_pop
+  function next() {
+    const currentIndex = allowedSlides.indexOf(appState.currentSlide);
+    if (currentIndex !== -1) {
+      const nextIndex = (currentIndex + 1) % allowedSlides.length;
+      goTo(allowedSlides[nextIndex]);
+    } else {
+      goTo(allowedSlides[0]);
+    }
+  }
+
+  function prev() {
+    const currentIndex = allowedSlides.indexOf(appState.currentSlide);
+    if (currentIndex !== -1) {
+      const prevIndex = (currentIndex - 1 + allowedSlides.length) % allowedSlides.length;
+      goTo(allowedSlides[prevIndex]);
+    } else {
+      goTo(allowedSlides[0]);
+    }
+  }
 
   function openMenu() {
     if (!navPop || !menuBtn) return;
@@ -134,6 +155,11 @@ import { initGallery, fillMarquees } from './03_cards.js';
     const idx = parseInt(t.getAttribute("data-goto"), 10);
     if (!isNaN(idx)) {
       if (navPop && navPop.classList.contains("open")) closeMenu();
+      const subcatModal = document.getElementById("subcatModal");
+      if (subcatModal && subcatModal.classList.contains("open")) {
+        subcatModal.classList.remove("open");
+        subcatModal.setAttribute("aria-hidden", "true");
+      }
       goTo(idx);
     }
   });
@@ -142,6 +168,22 @@ import { initGallery, fillMarquees } from './03_cards.js';
   if (nextBtn) nextBtn.addEventListener("click", next);
 
   document.addEventListener("keydown", (e) => {
+    const imageModal = document.getElementById("imageModal");
+    if (imageModal && imageModal.style.display === "flex") {
+      if (e.key === "Escape") {
+        imageModal.style.display = "none";
+        imageModal.setAttribute("aria-hidden", "true");
+      }
+      return;
+    }
+    const subcatModal = document.getElementById("subcatModal");
+    if (subcatModal && subcatModal.classList.contains("open")) {
+      if (e.key === "Escape") {
+        subcatModal.classList.remove("open");
+        subcatModal.setAttribute("aria-hidden", "true");
+      }
+      return;
+    }
     if (navPop && navPop.classList.contains("open")) {
       if (e.key === "Escape") closeMenu();
       return;
@@ -153,12 +195,8 @@ import { initGallery, fillMarquees } from './03_cards.js';
         e.preventDefault(); prev(); break;
       case " ":
         e.preventDefault(); next(); break;
-      case "Home":
-        e.preventDefault(); goTo(0); break;
-      case "End":
-        e.preventDefault(); goTo(total - 1); break;
       default:
-        if (/^[1-9]$/.test(e.key)) { e.preventDefault(); goTo(parseInt(e.key, 10) - 1); }
+        break;
     }
   });
 
@@ -189,4 +227,6 @@ import { initGallery, fillMarquees } from './03_cards.js';
   fillMarquees();
   if (document.fonts && document.fonts.ready) { document.fonts.ready.then(fillMarquees); }
   window.addEventListener("resize", debounce(fillMarquees, 200));
+
+  window.appGoTo = goTo;
 })();

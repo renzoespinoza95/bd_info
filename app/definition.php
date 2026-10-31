@@ -24,6 +24,7 @@
   global $varhost_img;
   global $varpath_img;
   global $url_flask;
+  global $neg_id;
 
 
   

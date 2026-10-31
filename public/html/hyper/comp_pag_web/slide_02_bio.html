@@ -1,0 +1,47 @@
+<section class="slide s-lime" data-slide="1">
+  <div class="inner scrollable">
+    <div class="wrap">
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; min-height: 70vh;" data-reveal>
+        
+        <!-- Columna Izquierda: Imagen Lorem Picsum con botón central de Visualizar -->
+        <div style="position: relative; border: 4px solid var(--ink); background: var(--ink-2); box-shadow: 6px 6px 0 var(--orange); aspect-ratio: 4/3; overflow: hidden;">
+          <img src="https://picsum.photos/seed/nosotros/800/600" alt="Nosotros" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+          
+          <div style="position: absolute; inset: 0; background: rgba(11,11,25,0.4); display: flex; justify-content: center; align-items: center;">
+            <button class="btn fill btn-visualizar-vimeo" style="background: var(--lime); color: var(--ink); border: 3px solid var(--ink); box-shadow: 4px 4px 0 var(--orange); font-family: var(--font-pixel); font-size: 18px; padding: 12px 24px; cursor: pointer;">
+              VISUALIZAR &rarr;
+            </button>
+          </div>
+        </div>
+
+        <!-- Columna Derecha: Contenido txt_nosotros y recuadros inferiores con iconos TikTok y Facebook -->
+        <div style="display: flex; flex-direction: column; justify-content: space-between; height: 100%;">
+          <div>
+            <span class="kicker hl-orange">Institucional</span>
+            <h2 class="big" style="margin-top: 6px; font-size: clamp(32px, 4vw, 54px);">{{{nosotros_titulo}}}</h2>
+            
+            <div class="mono" style="margin-top: 16px; font-size: 16px; line-height: 1.6; color: var(--ink);">
+              {{{nosotros_contenido}}}
+            </div>
+          </div>
+
+          <!-- Recuadros inferiores con iconos de TikTok y Facebook -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 30px;">
+            <a href="https://www.tiktok.com" target="_blank" rel="noopener noreferrer" style="border: 3px solid var(--ink); background: var(--ink); color: var(--lime); padding: 15px; text-align: center; font-family: var(--font-pixel); font-size: 16px; text-decoration: none; box-shadow: 3px 3px 0 var(--orange); display: flex; align-items: center; justify-content: center; gap: 10px;">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 20.1a6.34 6.34 0 0010.86-4.43v-7a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1.04-.1z"/></svg>
+              TIKTOK
+            </a>
+            <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" style="border: 3px solid var(--ink); background: var(--ink); color: var(--lime); padding: 15px; text-align: center; font-family: var(--font-pixel); font-size: 16px; text-decoration: none; box-shadow: 3px 3px 0 var(--orange); display: flex; align-items: center; justify-content: center; gap: 10px;">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/></svg>
+              FACEBOOK
+            </a>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</section>

@@ -1,0 +1,38 @@
+<div class="nav-pop" id="subcatModal" aria-hidden="true">
+  <div class="nav-head">
+    <span class="mark" style="display:inline-flex; align-items:center; gap:10px;">
+      <img src="{{img_logo}}" alt="Logo" style="width:28px; height:28px; object-fit:contain; border-radius:50%; background:#fff; padding:2px;">
+      <span>SELECCIONE UN TIPO DE DISEÑO</span>
+    </span>
+    <button class="x" id="closeSubcatModal" aria-label="Cerrar menú">CERRAR &#10005;</button>
+  </div>
+  
+  <div class="scrollable" style="padding: 20px 0; overflow-y:auto; flex:1;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; max-width: 1120px; margin: 0 auto;">
+      {{#promociones}}
+      <div class="promo-card-wrapper select-subcat-card" 
+           data-subcat-title="{{titulo}}" 
+           style="position: relative; border: 3px solid var(--lime); background: var(--ink-2); box-shadow: 5px 5px 0 var(--lime); overflow: hidden; aspect-ratio: 4/3; cursor: pointer;">
+        
+        <script type="application/json" class="subcat-json-script">{{{subcat_items_json_encoded}}}</script>
+        
+        <img src="{{img}}" alt="{{titulo}}" style="width: 100%; height: 100%; object-fit: cover; display: block;" loading="lazy">
+        
+        <div style="position: absolute; top: 0; left: 0; right: 0; background: var(--orange); color: var(--ink); padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--ink); z-index: 2;">
+          <span style="font-family: var(--font-display); font-size: 19px; letter-spacing: 1px; text-transform: uppercase;">{{titulo}}</span>
+          <span style="font-family: var(--font-pixel); font-size: 24px; color: var(--ink); line-height: 1;">+</span>
+        </div>
+
+        <div style="position: absolute; inset: 0; background: rgba(11, 11, 25, 0.88); display: flex; flex-direction: column; justify-content: flex-end; padding: 20px;">
+          <div class="card-html-desc" style="font-family: var(--font-body); font-size: 14px; color: var(--white); margin-bottom: 12px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+            {{{html_contenido}}}
+          </div>
+          <span class="btn fill" style="background: var(--lime); color: var(--ink); border: 2px solid var(--ink); font-family: var(--font-pixel); text-align: center; padding: 8px; font-size: 15px;">
+            VER DISEÑOS &rarr;
+          </span>
+        </div>
+      </div>
+      {{/promociones}}
+    </div>
+  </div>
+</div>

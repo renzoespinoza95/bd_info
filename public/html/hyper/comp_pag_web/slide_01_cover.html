@@ -1,0 +1,100 @@
+<section class="slide s-ink active" data-slide="0">
+    <div class="inner scrollable" style="padding: calc(var(--bar) + 10px) 0 calc(var(--foot) + 20px);">
+      
+      <!-- Contenedor del Banner Slider Principal -->
+      <div class="industrial-slider-container" style="position:relative; width:100%; height:clamp(340px, 50vh, 520px); min-height:320px; display:flex; align-items:center; overflow:hidden;">
+        
+        <!-- Pistas de diapositivas -->
+        <div class="industrial-slides-track" id="industrialTrack" style="position:absolute; inset:0; display:flex; transition:transform 0.5s ease-in-out;">
+          {{#sliders}}
+          <div class="industrial-slide" style="min-width:100%; height:100%; position:relative;">
+            <img src="{{img}}" alt="Banner Industrial" style="width:100%; height:100%; object-fit:cover; display:block;">
+            <div style="position:absolute; inset:0; background:rgba(0,0,0,0.4);"></div>
+          </div>
+          {{/sliders}}
+        </div>
+
+        <!-- Capa de contenido superpuesto -->
+        <div class="wrap" style="position:relative; z-index:10; width:100%; padding:0 var(--edge); pointer-events:none;">
+          <div class="industrial-content" style="pointer-events:auto;">
+            {{#sliders}}
+            <div class="slider-info-box" style="display:none;">
+              <span class="sticker" style="background:var(--orange); color:var(--white); border-color:var(--ink); font-family:var(--font-pixel); padding:6px 14px; margin-bottom:10px; display:inline-block; box-shadow:3px 3px 0 var(--ink);">
+                {{titulo_superior}}
+              </span>
+              <h1 class="huge" style="color:var(--white); text-shadow:2px 2px 0 var(--ink); font-size:clamp(26px, 5vw, 56px); max-width:800px; line-height:1.1;">
+                {{descripcion}}
+              </h1>
+            </div>
+            {{/sliders}}
+          </div>
+        </div>
+
+        <!-- Flechas laterales de navegación -->
+        <button class="ind-arrow ind-prev" id="indPrev" aria-label="Anterior" style="position:absolute; left:12px; z-index:20; background:rgba(11,11,11,0.75); border:2px solid var(--lime); color:var(--lime); width:42px; height:42px; display:grid; place-items:center; cursor:pointer; transition:0.2s;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="width:20px;height:20px;"><path d="M15 5l-7 7 7 7"/></svg>
+        </button>
+        <button class="ind-arrow ind-next" id="indNext" aria-label="Siguiente" style="position:absolute; right:12px; z-index:20; background:rgba(11,11,11,0.75); border:2px solid var(--lime); color:var(--lime); width:42px; height:42px; display:grid; place-items:center; cursor:pointer; transition:0.2s;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="width:20px;height:20px;"><path d="M9 5l7 7-7 7"/></svg>
+        </button>
+
+        <!-- Botón flotante "SOLICITE ASESORAMIENTO" con el diseño oficial -->
+        <div style="position:absolute; right:var(--edge); bottom:20px; z-index:25;">
+          <a href="{{url_whatsapp}}" target="_blank" rel="noopener noreferrer" class="btn fill" style="background:var(--lime); color:var(--ink); border:3px solid var(--ink); box-shadow:4px 4px 0 var(--orange); font-family:var(--font-pixel); letter-spacing:1px; padding:10px 20px; font-size:clamp(14px, 1.4vw, 18px);">
+            SOLICITE ASESORAMIENTO &rarr;
+          </a>
+        </div>
+
+      </div>
+
+      <!-- Marquesina intermedia -->
+      <div class="marquee bleed" data-reveal style="margin-top:15px; border-bottom:none; background:var(--lime); color:var(--ink)">
+        <div class="track">
+          {{#marquesina_words}}
+            <span>{{.}}</span><span class="s">&#10022;</span>
+          {{/marquesina_words}}
+        </div>
+      </div>
+
+      <!-- Sección de Promociones / Reparaciones e Ingeniería -->
+      {{> promociones}}
+
+    </div>
+  </section>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const track = document.getElementById("industrialTrack");
+      const slides = track ? track.querySelectorAll(".industrial-slide") : [];
+      const infoBoxes = document.querySelectorAll(".slider-info-box");
+      const btnPrev = document.getElementById("indPrev");
+      const btnNext = document.getElementById("indNext");
+      let currentIdx = 0;
+
+      function updateSlide(idx) {
+        if (!track || slides.length === 0) return;
+        track.style.transform = `translateX(-${idx * 100}%)`;
+        infoBoxes.forEach((box, i) => {
+          box.style.display = (i === idx) ? "block" : "none";
+        });
+      }
+
+      if (infoBoxes.length > 0) infoBoxes[0].style.display = "block";
+
+      if (btnNext) {
+        btnNext.addEventListener("click", (e) => {
+          e.stopPropagation();
+          currentIdx = (currentIdx + 1) % slides.length;
+          updateSlide(currentIdx);
+        });
+      }
+
+      if (btnPrev) {
+        btnPrev.addEventListener("click", (e) => {
+          e.stopPropagation();
+          currentIdx = (currentIdx - 1 + slides.length) % slides.length;
+          updateSlide(currentIdx);
+        });
+      }
+    });
+  </script>
