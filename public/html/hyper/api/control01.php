@@ -1,9 +1,10 @@
 <?php
 // ==========================================
-// ENDPOINT GET /radix (Radiografía de la Plantilla con Validación)
+// ENDPOINT GET /radix (Radiografía de la Plantilla con Validación y Negocio Global)
 // ==========================================
 Flight::route('GET /radix', function () {
     include DEFINITION;
+    global $neg_id; // Obtenemos el neg_id global en memoria
 
     // 🔥 Validación segura usando la clase perso::vari()
     $radix_val = 0;
@@ -29,20 +30,21 @@ Flight::route('GET /radix', function () {
     $subcat_claves = DB::query("SELECT clave_txt, titulo FROM reg_subcat_pag_web WHERE clave_txt IS NOT NULL AND clave_txt != ''");
     $cat_claves = DB::query("SELECT clave_txt, titulo FROM reg_cat_pag_web WHERE clave_txt IS NOT NULL AND clave_txt != ''");
 
-    // 2. Obtener la jerarquía de Categorías, Subcategorías y sus Relaciones
+    // 2. Obtener la jerarquía de Categorías, Subcategorías y sus Relaciones filtradas por el neg_id global
     $categorias = DB::query("
         SELECT c.cat_pag_web_id, c.titulo as cat_titulo, c.clave_txt as cat_clave,
                s.subcat_pag_web_id, s.titulo as subcat_titulo, s.clave_txt as subcat_clave
         FROM reg_cat_pag_web c
         LEFT JOIN reg_subcat_pag_web s ON s.cat_pag_web_id = c.cat_pag_web_id
+        WHERE c.neg_id = %i OR c.neg_id IS NULL
         ORDER BY c.orden ASC, s.orden ASC
-    ");
+    ", $neg_id);
 
     // 3. Obtener variables del sistema (reg_vari)
     $variables = DB::query("SELECT nombre, valor FROM reg_vari");
 
-    // 4. Obtener datos generales de renderizado (Negocio, Footer, Títulos)
-    $negocio = DB::queryFirstRow("SELECT nombre FROM reg_neg LIMIT 1");
+    // 4. Obtener datos del negocio actual utilizando la variable global $neg_id
+    $negocio = DB::queryFirstRow("SELECT nombre FROM reg_neg WHERE neg_id = %i LIMIT 1", $neg_id);
     $nombre_negocio = $negocio['nombre'] ?? 'HYPRLUV';
     
     $visitas = 0;
@@ -58,8 +60,9 @@ Flight::route('GET /radix', function () {
     $ascii .= "====================================================\n\n";
 
     $ascii .= "[+] INFORMACION GENERAL & RENDER\n";
-    $ascii .= "    - Nombre del Negocio : " . $nombre_negocio . "\n";
-    $ascii .= "    - Visitas Totales    : " . $visitas . "\n\n";
+    $ascii .= "    - Negocio ID (Global) : " . ($neg_id ?? 'NO DEFINIDO') . "\n";
+    $ascii .= "    - Nombre del Negocio  : " . $nombre_negocio . "\n";
+    $ascii .= "    - Visitas Totales     : " . $visitas . "\n\n";
 
     $ascii .= "[+] VARIABLES DEL SISTEMA (reg_vari)\n";
     foreach ($variables as $v) {
@@ -109,7 +112,6 @@ Flight::route('GET /radix', function () {
     }
     $ascii .= "\n====================================================\n";
 
-    // Devolver la respuesta en formato texto plano con codificación ASCII limpia
     header("Content-Type: text/plain; charset=utf-8");
     echo $ascii;
 });

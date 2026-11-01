@@ -3,7 +3,7 @@
 include_once __DIR__ . '/api/control01.php';
 
 Flight::route('GET /', function () {
-    global $varhost, $apphost; 
+    global $varhost, $apphost, $neg_id; // Integración de la variable global neg_id en memoria
     
     perso::visita();    
     $mis_visitas = perso::vari("visitas");
@@ -51,11 +51,11 @@ Flight::route('GET /', function () {
     $subtitulo_promocion = $promos_sub_row['contenido'] ?? 'Catálogo & Servicios';
     $titulo_promocion = $promos_tit_row['contenido'] ?? 'REPARACIONES E INGENIERÍA';
 
-    $negocio = DB::queryFirstRow("SELECT neg_id, nombre, img_logo, celular_informes FROM reg_neg LIMIT 1");
+    // Obtención de los datos del negocio actual mediante el $neg_id global
+    $negocio = DB::queryFirstRow("SELECT neg_id, nombre, img_logo, celular_informes FROM reg_neg WHERE neg_id = %i LIMIT 1", $neg_id);
     $nombre_negocio = $negocio['nombre'] ?? 'HYPRLUV';
     $img_logo = $negocio['img_logo'] ?: 'https://barsi-img.b-cdn.net/recursos/logo-regentis.png';
     $celular_informes = $negocio['celular_informes'] ?? '987654321';
-    $neg_id = $negocio['neg_id'] ?? 1;
 
     $celular_limpio = preg_replace('/[^0-9]/', '', $celular_informes);
     if (strlen($celular_limpio) === 9) {
@@ -66,12 +66,13 @@ Flight::route('GET /', function () {
     $anio_actual = date('Y');
     $footer_text = $nombre_negocio . ' ' . $anio_actual . ' · Hecho por regentis · Visitas: ' . $mis_visitas;
 
+    // Sliders filtrados por el neg_id global
     $sliders_raw = DB::query("
         SELECT slider_id, img, orden, descripcion, titulo_superior
         FROM reg_slider
-        WHERE is_visible = 1
+        WHERE neg_id = %i AND is_visible = 1
         ORDER BY orden ASC
-    ");
+    ", $neg_id);
 
     $sliders = array_map(function($s) {
         return [
@@ -91,10 +92,11 @@ Flight::route('GET /', function () {
         ];
     }
 
+    // Categoría de diseños filtrada por el neg_id global
     $cat_disenos = DB::queryFirstRow("
         SELECT cat_pag_web_id 
         FROM reg_cat_pag_web 
-        WHERE clave_txt = %s AND (neg_id = %i OR neg_id IS NULL)
+        WHERE clave_txt = %s AND neg_id = %i
         LIMIT 1
     ", 'txt_disenos', $neg_id);
 
@@ -129,7 +131,6 @@ Flight::route('GET /', function () {
             foreach ($items_raw as $it) {
                 $item_id = $it['item_pag_web_id'];
                 
-                // Consultar los videos asociados a este ítem en reg_pag_item_vid
                 $videos_raw = DB::query("
                     SELECT pag_item_vid_id, titulo AS video_titulo, codigo_web, url_img
                     FROM reg_pag_item_vid
