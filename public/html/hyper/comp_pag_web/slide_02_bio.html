@@ -55,13 +55,13 @@
   <!-- Modal en Pantalla Completa para el Video -->
   <div class="nosotros-fullscreen-modal" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(11, 11, 11, 0.95); backdrop-filter:blur(8px); padding:40px; justify-content:center; align-items:center;">
     
-    <!-- Botón Cerrar X -->
-    <button class="close-nosotros-modal" style="position:absolute; top:25px; right:30px; background:var(--orange); color:var(--ink); border:3px solid var(--ink); font-family:var(--font-pixel); font-size:24px; padding:6px 16px; cursor:pointer; box-shadow:4px 4px 0 var(--lime); z-index:10000;">
+    <!-- Botón Cerrar X ubicado en la parte central derecha -->
+    <button class="close-nosotros-modal" style="position:absolute; right:30px; top:50%; transform:translateY(-50%); background:var(--orange); color:var(--ink); border:3px solid var(--ink); font-family:var(--font-pixel); font-size:24px; padding:6px 16px; cursor:pointer; box-shadow:4px 4px 0 var(--lime); z-index:10000;">
       X
     </button>
 
     <!-- Contenedor de Video a Pantalla Completa -->
-    <div style="width:100%; height:100%; max-width:1200px; max-height:85vh; display:flex; justify-content:center; align-items:center;" id="nosotrosVideoContainer">
+    <div style="width:100%; height:100%; max-width:1100px; max-height:85vh; display:flex; justify-content:center; align-items:center;" id="nosotrosVideoContainer">
       <!-- Se inyectará el iframe del video dinámicamente -->
     </div>
 

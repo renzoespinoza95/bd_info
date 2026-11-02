@@ -42,7 +42,20 @@ Flight::route('GET /', function () {
     ", $nosotros_item_id);
 
     $tiene_videos_nosotros = !empty($nosotros_videos);
-    $nosotros_video_codigo = $tiene_videos_nosotros ? $nosotros_videos[0]['codigo_web'] : '';
+    $nosotros_video_raw = $tiene_videos_nosotros ? $nosotros_videos[0]['codigo_web'] : '';
+    
+    // Extracción limpia del ID numérico de Vimeo (soporta URLs completas o solo IDs)
+    $nosotros_video_codigo = '';
+    if (!empty($nosotros_video_raw)) {
+        if (preg_match('/vimeo\.com\/(\d+)/', $nosotros_video_raw, $matches)) {
+            $nosotros_video_codigo = $matches[1];
+        } else {
+            $nosotros_video_codigo = preg_replace('/[^0-9]/', '', $nosotros_video_raw);
+        }
+    }
+    if (empty($nosotros_video_codigo)) {
+        $tiene_videos_nosotros = false;
+    }
 
     $meta_keywords_row = DB::queryFirstRow("
         SELECT i.contenido 
@@ -164,9 +177,18 @@ Flight::route('GET /', function () {
 
                 $videos_item = [];
                 foreach($videos_raw as $vid) {
+                    $vcode_raw = $vid['codigo_web'];
+                    $vcode_limpio = '';
+                    if (!empty($vcode_raw)) {
+                        if (preg_match('/vimeo\.com\/(\d+)/', $vcode_raw, $m)) {
+                            $vcode_limpio = $m[1];
+                        } else {
+                            $vcode_limpio = preg_replace('/[^0-9]/', '', $vcode_raw);
+                        }
+                    }
                     $videos_item[] = [
                         'titulo' => $vid['video_titulo'] ?? 'VISUALIZAR',
-                        'codigo_web' => $vid['codigo_web']
+                        'codigo_web' => $vcode_limpio
                     ];
                 }
 
@@ -174,7 +196,7 @@ Flight::route('GET /', function () {
                     'titulo' => $it['item_titulo'] ?? $sc['titulo'],
                     'img' => $it['item_url_img'] ?: ($sc['url_img'] ?: 'https://picsum.photos/seed/item/600/800'),
                     'videos' => $videos_item,
-                    'tiene_videos' => !empty($videos_item)
+                    'tiene_videos' => !empty($videos_item) && !empty($videos_item[0]['codigo_web'])
                 ];
             }
 
