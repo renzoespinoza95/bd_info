@@ -38,9 +38,8 @@ Flight::route('GET /', function () {
         LIMIT 1
     ", 'txt_meta', 'txt_meta_description');
 
-    $meta_description = $meta_desc_row['contenido'] ?? 'HYPRLUV, a loud Y2K hyperpop electronic press kit slideshow template.';
-    $meta_keywords = $meta_keywords_row['contenido'] ?? 'hyperpop, y2k, electronic press kit, music, tour';
-    $titulo_pag_web = $inicio['titulo'] ?? 'HYPRLUV // Electronic Press Kit · TM-627';
+    $meta_description = $meta_desc_row['contenido'] ?? 'mi meta_description';
+    $meta_keywords = $meta_keywords_row['contenido'] ?? 'mi meta_keywords';
     
     $nosotros_titulo = $nosotros_row['titulo'] ?? 'NOSOTROS';
     $nosotros_contenido = $nosotros_row['contenido'] ?? 'Información institucional de la empresa.';
@@ -53,9 +52,12 @@ Flight::route('GET /', function () {
 
     // Obtención de los datos del negocio actual mediante el $neg_id global
     $negocio = DB::queryFirstRow("SELECT neg_id, nombre, img_logo, celular_informes FROM reg_neg WHERE neg_id = %i LIMIT 1", $neg_id);
-    $nombre_negocio = $negocio['nombre'] ?? 'HYPRLUV';
+    $nombre_negocio = $negocio['nombre'] ?? 'mi nombre_negocio';
     $img_logo = $negocio['img_logo'] ?: 'https://barsi-img.b-cdn.net/recursos/logo-regentis.png';
-    $celular_informes = $negocio['celular_informes'] ?? '987654321';
+    $celular_informes = $negocio['celular_informes'] ?? 'mi celular_informes';
+
+    // 🔥 El title de la página es exactamente igual al nombre del negocio
+    $titulo_pag_web = $nombre_negocio;
 
     $celular_limpio = preg_replace('/[^0-9]/', '', $celular_informes);
     if (strlen($celular_limpio) === 9) {
@@ -64,7 +66,7 @@ Flight::route('GET /', function () {
     $url_whatsapp = 'https://wa.me/' . $celular_limpio . '?text=' . urlencode("Estimados, me comunico a través de su página web para solicitar mayor información.");
 
     $anio_actual = date('Y');
-    $footer_text = $nombre_negocio . ' ' . $anio_actual . ' · Hecho por regentis · Visitas: ' . $mis_visitas;
+    $footer_text = $nombre_negocio . ' ' . $anio_actual . ' · Hecho por Regentis · Visitas: ' . $mis_visitas;
 
     // Sliders filtrados por el neg_id global
     $sliders_raw = DB::query("
@@ -77,8 +79,8 @@ Flight::route('GET /', function () {
     $sliders = array_map(function($s) {
         return [
             'img' => $s['img'] ?: 'https://picsum.photos/1200/600',
-            'titulo_superior' => $s['titulo_superior'] ?: 'SECTOR MINERÍA',
-            'descripcion' => $s['descripcion'] ?: 'REPARACIONES E INGENIERÍA'
+            'titulo_superior' => $s['titulo_superior'] ?: 'mi titulo_superior',
+            'descripcion' => $s['descripcion'] ?: 'mi descripcion'
         ];
     }, $sliders_raw);
 
@@ -86,8 +88,8 @@ Flight::route('GET /', function () {
         $sliders = [
             [
                 'img' => 'https://picsum.photos/seed/slide1/1200/600',
-                'titulo_superior' => 'SECTOR MINERÍA',
-                'descripcion' => 'REPARACIONES E INGENIERÍA'
+                'titulo_superior' => 'mi titulo_superior',
+                'descripcion' => 'mi descripcion'
             ]
         ];
     }

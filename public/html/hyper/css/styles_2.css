@@ -50,7 +50,7 @@ img{max-width:100%;display:block}
 .slide.active{opacity:1;visibility:visible;z-index:1;transition:opacity .3s var(--pop) .24s,visibility 0s}
 .slide.leaving{opacity:0;z-index:2;transition:opacity .26s var(--pop),visibility 0s linear .26s}
 
-.inner{position:relative;z-index:1;height:100%;width:100%;overflow-y:auto;overflow-x:hidden;padding:calc(var(--bar) + 18px) var(--edge) calc(var(--foot) + 12px);display:flex;flex-direction:column}
+.inner{position:relative;z-index:1;height:100%;width:100%;overflow-y:auto;overflow-x:hidden;padding:calc(var(--bar) + 18px) var(--edge) calc(var(--foot) + 40px);display:flex;flex-direction:column}
 .wrap{width:100%;max-width:1120px;margin:auto}
 
 .stage-bg{position:absolute;inset:0;z-index:0;background-color:var(--ink);transition:background-color .62s var(--pop);will-change:background-color}
@@ -91,9 +91,9 @@ img{max-width:100%;display:block}
 .btn.fill{background:var(--lime);color:var(--ink);box-shadow:5px 5px 0 var(--ink)}
 .btn.fill:hover{box-shadow:8px 8px 0 var(--ink)}
 
-.marquee{overflow:hidden;white-space:nowrap;width:100%;border-top:3px solid currentColor;border-bottom:3px solid currentColor;padding:7px 0}
+.marquee{overflow:visible;white-space:nowrap;width:100%;border-top:3px solid currentColor;border-bottom:3px solid currentColor;padding:22px 0;line-height:normal;display:flex;align-items:center;min-height:75px;}
 .marquee.bleed{width:calc(100% + 2 * var(--edge));max-width:none;margin-left:calc(-1 * var(--edge));margin-right:calc(-1 * var(--edge))}
-.marquee .track{display:inline-block;white-space:nowrap;font-family:var(--font-display);font-size:clamp(22px,3.2vw,38px);letter-spacing:1px;text-transform:uppercase;animation:scroll 22s linear infinite}
+.marquee .track{display:inline-block;white-space:nowrap;font-family:var(--font-display);font-size:clamp(26px, 3.8vw, 44px);letter-spacing:1px;text-transform:uppercase;animation:scroll 22s linear infinite}
 .marquee .track span{padding:0 .35em}
 .marquee .track .s{color:var(--orange)}
 @keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}

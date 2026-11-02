@@ -9,7 +9,6 @@
           {{#sliders}}
           <div class="industrial-slide" style="min-width:100%; height:100%; position:relative;">
             <img src="{{img}}" alt="Banner Industrial" style="width:100%; height:100%; object-fit:cover; display:block;">
-            <div style="position:absolute; inset:0; background:rgba(0,0,0,0.4);"></div>
           </div>
           {{/sliders}}
         </div>
@@ -47,14 +46,17 @@
 
       </div>
 
-      <!-- Marquesina intermedia -->
-      <div class="marquee bleed" data-reveal style="margin-top:15px; border-bottom:none; background:var(--lime); color:var(--ink)">
+      <!-- Marquesina intermedia con espacio controlado -->
+      <div class="marquee bleed" data-reveal style="margin-bottom:50px; border-bottom:none; background:var(--lime); color:var(--ink); position:relative; z-index:3;">
         <div class="track">
           {{#marquesina_words}}
             <span>{{.}}</span><span class="s">&#10022;</span>
           {{/marquesina_words}}
         </div>
       </div>
+
+      <!-- Espaciador físico para garantizar que no se solapan -->
+      <div style="height: 40px; width: 100%;"></div>
 
       <!-- Sección de Promociones / Reparaciones e Ingeniería -->
       {{> promociones}}
