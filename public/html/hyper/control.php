@@ -16,11 +16,33 @@ Flight::route('GET /', function () {
     ", 'txt_inicio');
 
     $nosotros_row = DB::queryFirstRow("
-        SELECT titulo, subtitulo_detalle, contenido
+        SELECT item_pag_web_id, titulo, subtitulo_detalle, contenido
         FROM reg_item_pag_web
         WHERE clave_txt = %s
         LIMIT 1
     ", 'txt_nosotros');
+
+    $nosotros_item_id = $nosotros_row['item_pag_web_id'] ?? 0;
+
+    $nosotros_img_row = DB::queryFirstRow("
+        SELECT url_img 
+        FROM reg_pag_item_img
+        WHERE item_pag_web_id = %i AND is_visible = 1
+        ORDER BY orden ASC
+        LIMIT 1
+    ", $nosotros_item_id);
+
+    $nosotros_imagen = $nosotros_img_row['url_img'] ?? 'https://picsum.photos/600/800';
+
+    $nosotros_videos = DB::query("
+        SELECT pag_item_vid_id, titulo AS video_titulo, codigo_web, url_img
+        FROM reg_pag_item_vid
+        WHERE item_pag_web_id = %i AND is_visible = 1
+        ORDER BY orden ASC
+    ", $nosotros_item_id);
+
+    $tiene_videos_nosotros = !empty($nosotros_videos);
+    $nosotros_video_codigo = $tiene_videos_nosotros ? $nosotros_videos[0]['codigo_web'] : '';
 
     $meta_keywords_row = DB::queryFirstRow("
         SELECT i.contenido 
@@ -237,6 +259,9 @@ Flight::route('GET /', function () {
         'titulo_promocion'        => $titulo_promocion,
         'nosotros_titulo'         => $nosotros_titulo,
         'nosotros_contenido'      => $nosotros_contenido,
+        'nosotros_imagen'         => $nosotros_imagen,
+        'tiene_videos_nosotros'   => $tiene_videos_nosotros,
+        'nosotros_video_codigo'   => $nosotros_video_codigo,
         'subcat_titulo'           => $subcat_detalle_activa['titulo'],
         'subcat_texto02'          => $subcat_detalle_activa['texto02'],
         'subcat_items'            => $subcat_detalle_activa['items'],

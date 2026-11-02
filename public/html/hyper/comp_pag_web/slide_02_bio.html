@@ -4,14 +4,21 @@
       
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; min-height: 70vh;" data-reveal>
         
-        <!-- Columna Izquierda: Imagen Lorem Picsum con botón central de Visualizar -->
+        <!-- Columna Izquierda: Imagen y botón de visualización de video -->
         <div style="position: relative; border: 4px solid var(--ink); background: var(--ink-2); box-shadow: 6px 6px 0 var(--orange); aspect-ratio: 4/3; overflow: hidden;">
-          <img src="https://picsum.photos/seed/nosotros/800/600" alt="Nosotros" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+          <img src="{{nosotros_imagen}}" alt="Nosotros" style="width: 100%; height: 100%; object-fit: cover; display: block;">
           
           <div style="position: absolute; inset: 0; background: rgba(11,11,25,0.4); display: flex; justify-content: center; align-items: center;">
-            <button class="btn fill btn-visualizar-vimeo" style="background: var(--lime); color: var(--ink); border: 3px solid var(--ink); box-shadow: 4px 4px 0 var(--orange); font-family: var(--font-pixel); font-size: 18px; padding: 12px 24px; cursor: pointer;">
+            {{#tiene_videos_nosotros}}
+            <button class="btn fill btn-visualizar-nosotros" data-vcode="{{nosotros_video_codigo}}" style="background: var(--lime); color: var(--ink); border: 3px solid var(--ink); box-shadow: 4px 4px 0 var(--orange); font-family: var(--font-pixel); font-size: 18px; padding: 12px 24px; cursor: pointer;">
               VISUALIZAR &rarr;
             </button>
+            {{/tiene_videos_nosotros}}
+            {{^tiene_videos_nosotros}}
+            <button class="btn" style="background: rgba(11, 11, 11, 0.85); color: #b5b5b5; border: 3px solid var(--ink); box-shadow: 4px 4px 0 rgba(0,0,0,0.4); font-family: var(--font-pixel); font-size: 16px; padding: 12px 24px; cursor: not-allowed;" disabled>
+              SIN VIDEOS DISPONIBLES
+            </button>
+            {{/tiene_videos_nosotros}}
           </div>
         </div>
 
@@ -44,4 +51,59 @@
 
     </div>
   </div>
+
+  <!-- Modal en Pantalla Completa para el Video -->
+  <div class="nosotros-fullscreen-modal" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(11, 11, 11, 0.95); backdrop-filter:blur(8px); padding:40px; justify-content:center; align-items:center;">
+    
+    <!-- Botón Cerrar X -->
+    <button class="close-nosotros-modal" style="position:absolute; top:25px; right:30px; background:var(--orange); color:var(--ink); border:3px solid var(--ink); font-family:var(--font-pixel); font-size:24px; padding:6px 16px; cursor:pointer; box-shadow:4px 4px 0 var(--lime); z-index:10000;">
+      X
+    </button>
+
+    <!-- Contenedor de Video a Pantalla Completa -->
+    <div style="width:100%; height:100%; max-width:1200px; max-height:85vh; display:flex; justify-content:center; align-items:center;" id="nosotrosVideoContainer">
+      <!-- Se inyectará el iframe del video dinámicamente -->
+    </div>
+
+  </div>
 </section>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const slideSection = document.querySelector('[data-slide="1"]');
+    if (!slideSection) return;
+
+    const btnVisualizar = slideSection.querySelector('.btn-visualizar-nosotros');
+    const modal = slideSection.querySelector('.nosotros-fullscreen-modal');
+    const btnClose = slideSection.querySelector('.close-nosotros-modal');
+    const videoContainer = slideSection.querySelector('#nosotrosVideoContainer');
+
+    if (btnVisualizar && modal) {
+      btnVisualizar.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const vcode = btnVisualizar.getAttribute('data-vcode');
+        if (vcode && videoContainer) {
+          videoContainer.innerHTML = `<iframe src="https://player.vimeo.com/video/${vcode}?autoplay=1" style="width:100%; height:100%; border:4px solid var(--lime); box-shadow:8px 8px 0 var(--orange);" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`;
+        }
+        modal.style.display = "flex";
+      });
+    }
+
+    if (btnClose && modal) {
+      btnClose.addEventListener("click", (e) => {
+        e.stopPropagation();
+        modal.style.display = "none";
+        if (videoContainer) videoContainer.innerHTML = "";
+      });
+    }
+
+    if (modal) {
+      modal.addEventListener("click", (e) => {
+        if (e.target === modal) {
+          modal.style.display = "none";
+          if (videoContainer) videoContainer.innerHTML = "";
+        }
+      });
+    }
+  });
+</script>
