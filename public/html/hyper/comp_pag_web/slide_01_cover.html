@@ -72,6 +72,7 @@
       const btnPrev = document.getElementById("indPrev");
       const btnNext = document.getElementById("indNext");
       let currentIdx = 0;
+      let slideInterval;
 
       function updateSlide(idx) {
         if (!track || slides.length === 0) return;
@@ -81,22 +82,47 @@
         });
       }
 
+      function nextSlide() {
+        if (slides.length === 0) return;
+        currentIdx = (currentIdx + 1) % slides.length;
+        updateSlide(currentIdx);
+      }
+
+      function prevSlide() {
+        if (slides.length === 0) return;
+        currentIdx = (currentIdx - 1 + slides.length) % slides.length;
+        updateSlide(currentIdx);
+      }
+
+      function startAutoplay() {
+        if (slides.length > 1) {
+          slideInterval = setInterval(nextSlide, 4000);
+        }
+      }
+
+      function resetAutoplay() {
+        clearInterval(slideInterval);
+        startAutoplay();
+      }
+
       if (infoBoxes.length > 0) infoBoxes[0].style.display = "block";
 
       if (btnNext) {
         btnNext.addEventListener("click", (e) => {
           e.stopPropagation();
-          currentIdx = (currentIdx + 1) % slides.length;
-          updateSlide(currentIdx);
+          nextSlide();
+          resetAutoplay();
         });
       }
 
       if (btnPrev) {
         btnPrev.addEventListener("click", (e) => {
           e.stopPropagation();
-          currentIdx = (currentIdx - 1 + slides.length) % slides.length;
-          updateSlide(currentIdx);
+          prevSlide();
+          resetAutoplay();
         });
       }
+
+      startAutoplay();
     });
   </script>

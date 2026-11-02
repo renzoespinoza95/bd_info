@@ -42,20 +42,34 @@ Flight::route('GET /', function () {
     ", $nosotros_item_id);
 
     $tiene_videos_nosotros = !empty($nosotros_videos);
-    $nosotros_video_raw = $tiene_videos_nosotros ? $nosotros_videos[0]['codigo_web'] : '';
+    $raw_codigo_web = $tiene_videos_nosotros ? $nosotros_videos[0]['codigo_web'] : '';
     
-    // Extracción limpia del ID numérico de Vimeo (soporta URLs completas o solo IDs)
-    $nosotros_video_codigo = '';
-    if (!empty($nosotros_video_raw)) {
-        if (preg_match('/vimeo\.com\/(\d+)/', $nosotros_video_raw, $matches)) {
-            $nosotros_video_codigo = $matches[1];
+    $nosotros_video_id = '';
+    if (!empty($raw_codigo_web)) {
+        if (preg_match('/(\d+)/', $raw_codigo_web, $matches)) {
+            $nosotros_video_id = $matches[1];
         } else {
-            $nosotros_video_codigo = preg_replace('/[^0-9]/', '', $nosotros_video_raw);
+            $nosotros_video_id = $raw_codigo_web;
         }
     }
-    if (empty($nosotros_video_codigo)) {
-        $tiene_videos_nosotros = false;
-    }
+
+    // Extracción de enlaces dinámicos para TikTok y Facebook desde reg_item_pag_web
+    $tiktok_row = DB::queryFirstRow("
+        SELECT contenido 
+        FROM reg_item_pag_web 
+        WHERE clave_txt = %s 
+        LIMIT 1
+    ", 'txt_tiktok');
+
+    $facebook_row = DB::queryFirstRow("
+        SELECT contenido 
+        FROM reg_item_pag_web 
+        WHERE clave_txt = %s 
+        LIMIT 1
+    ", 'txt_facebook');
+
+    $url_tiktok = $tiktok_row['contenido'] ?? 'https://www.tiktok.com';
+    $url_facebook = $facebook_row['contenido'] ?? 'https://www.facebook.com';
 
     $meta_keywords_row = DB::queryFirstRow("
         SELECT i.contenido 
@@ -91,7 +105,6 @@ Flight::route('GET /', function () {
     $img_logo = $negocio['img_logo'] ?: 'https://barsi-img.b-cdn.net/recursos/logo-regentis.png';
     $celular_informes = $negocio['celular_informes'] ?? 'mi celular_informes';
 
-    // 🔥 El title de la página es exactamente igual al nombre del negocio
     $titulo_pag_web = $nombre_negocio;
 
     $celular_limpio = preg_replace('/[^0-9]/', '', $celular_informes);
@@ -177,18 +190,9 @@ Flight::route('GET /', function () {
 
                 $videos_item = [];
                 foreach($videos_raw as $vid) {
-                    $vcode_raw = $vid['codigo_web'];
-                    $vcode_limpio = '';
-                    if (!empty($vcode_raw)) {
-                        if (preg_match('/vimeo\.com\/(\d+)/', $vcode_raw, $m)) {
-                            $vcode_limpio = $m[1];
-                        } else {
-                            $vcode_limpio = preg_replace('/[^0-9]/', '', $vcode_raw);
-                        }
-                    }
                     $videos_item[] = [
                         'titulo' => $vid['video_titulo'] ?? 'VISUALIZAR',
-                        'codigo_web' => $vcode_limpio
+                        'codigo_web' => $vid['codigo_web']
                     ];
                 }
 
@@ -196,7 +200,7 @@ Flight::route('GET /', function () {
                     'titulo' => $it['item_titulo'] ?? $sc['titulo'],
                     'img' => $it['item_url_img'] ?: ($sc['url_img'] ?: 'https://picsum.photos/seed/item/600/800'),
                     'videos' => $videos_item,
-                    'tiene_videos' => !empty($videos_item) && !empty($videos_item[0]['codigo_web'])
+                    'tiene_videos' => !empty($videos_item)
                 ];
             }
 
@@ -276,6 +280,8 @@ Flight::route('GET /', function () {
         'img_logo'                => $img_logo,
         'celular_informes'        => $celular_informes,
         'url_whatsapp'            => $url_whatsapp,
+        'url_tiktok'              => $url_tiktok,
+        'url_facebook'            => $url_facebook,
         'footer_text'             => $footer_text,
         'subtitulo_promocion'     => $subtitulo_promocion,
         'titulo_promocion'        => $titulo_promocion,
@@ -283,7 +289,7 @@ Flight::route('GET /', function () {
         'nosotros_contenido'      => $nosotros_contenido,
         'nosotros_imagen'         => $nosotros_imagen,
         'tiene_videos_nosotros'   => $tiene_videos_nosotros,
-        'nosotros_video_codigo'   => $nosotros_video_codigo,
+        'nosotros_video_codigo'   => $nosotros_video_id,
         'subcat_titulo'           => $subcat_detalle_activa['titulo'],
         'subcat_texto02'          => $subcat_detalle_activa['texto02'],
         'subcat_items'            => $subcat_detalle_activa['items'],
