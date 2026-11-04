@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ManejoFácil | Escuela de Manejo - Brevetes en todo el Perú</title>
+  <meta name="description" content="Escuela de manejo en Perú. Obtén tu brevete clase A y B para autos, camionetas, buses, camiones y motos.">
+
+  <!-- Bootstrap 5 + Bootstrap Icons + Google Font Montserrat -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ================= HERO ================= -->
+  <header class="hero" id="inicio">
+    <nav class="navbar navbar-expand-lg navbar-dark position-relative z-3">
+      <div class="container">
+        <a class="navbar-brand logo" href="#inicio">manejo<span>fácil</span></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu" aria-controls="menu" aria-expanded="false" aria-label="Menú">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="menu">
+          <ul class="navbar-nav menu-links">
+            <li class="nav-item"><a class="nav-link active" href="#inicio">Inicio</a></li>
+            <li class="nav-item"><a class="nav-link" href="#licencias">Licencias</a></li>
+            <li class="nav-item"><a class="nav-link" href="#reservar">Reservar clase</a></li>
+            <li class="nav-item"><a class="nav-link" href="#contacto">Contacto</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container hero-content position-relative z-2">
+      <div class="row align-items-center">
+        <div class="col-lg-6 text-center text-lg-start">
+          <h1 class="hero-title">¿Quieres tu<br>brevete?</h1>
+          <p class="hero-text">Aprende a manejar con instructores certificados y obtén tu licencia clase A o B, para autos, camionetas, buses, camiones y motos.</p>
+          <div class="d-flex gap-3 justify-content-center justify-content-lg-start flex-wrap">
+            <a href="#reservar" class="btn btn-yellow btn-lg">Reservar ahora</a>
+            <a href="tel:+51980100000" class="btn btn-gray btn-lg">Llamar</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <img class="hero-car d-none d-lg-block"
+         src="https://images.unsplash.com/photo-1544636331-e26879cd4d9b?auto=format&fit=crop&w=1200&q=80"
+         alt="Auto amarillo de práctica"
+         onerror="this.onerror=null;this.src='https://placehold.co/900x500/FDC82F/000000?text=Auto+Amarillo'">
+
+    <!-- Ola decorativa -->
+    <svg class="hero-wave" viewBox="0 0 1440 160" preserveAspectRatio="none" aria-hidden="true">
+      <path fill="#ffffff" d="M0,120 C180,20 320,30 520,90 C760,160 1000,150 1200,90 C1320,55 1400,70 1440,95 L1440,160 L0,160 Z"/>
+    </svg>
+  </header>
+
+  <!-- ================= LICENCIAS ================= -->
+  <section class="section-white" id="licencias">
+    <div class="container">
+      <h2 class="section-title">Nuestras licencias</h2>
+      <div class="title-arrow"></div>
+
+      <div class="row g-4 g-xl-5 justify-content-center mt-2">
+        <!-- Card 1 -->
+        <div class="col-md-6 col-lg-4">
+          <div class="plan-card active">
+            <h3>AUTOS Y CAMIONETAS</h3>
+            <p>Brevete <strong>A-I</strong> para vehículos particulares y <strong>A-IIa</strong> para taxis, colectivos y ambulancias.</p>
+            <a href="#reservar" class="btn btn-plan" data-license="A-I">Más información</a>
+            <img src="https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=500&q=80"
+                 alt="Auto de práctica" onerror="this.onerror=null;this.src='https://placehold.co/300x150/FDC82F/000000?text=Auto'">
+          </div>
+        </div>
+        <!-- Card 2 -->
+        <div class="col-md-6 col-lg-4">
+          <div class="plan-card">
+            <h3>BUSES Y CAMIONES</h3>
+            <p>Brevete <strong>A-IIb, A-IIIa, A-IIIb y A-IIIc</strong> para transporte de pasajeros y carga pesada.</p>
+            <a href="#reservar" class="btn btn-plan" data-license="A-IIIa">Más información</a>
+            <img src="https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&w=500&q=80"
+                 alt="Camión de práctica" onerror="this.onerror=null;this.src='https://placehold.co/300x150/e6e6e6/000000?text=Camion'">
+          </div>
+        </div>
+        <!-- Card 3 -->
+        <div class="col-md-6 col-lg-4">
+          <div class="plan-card">
+            <h3>MOTOS Y MOTOTAXIS</h3>
+            <p>Brevete <strong>B-IIa, B-IIb y B-IIc</strong> para motocicletas, mototaxis y vehículos menores.</p>
+            <a href="#reservar" class="btn btn-plan" data-license="B-IIa">Más información</a>
+            <img src="https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=500&q=80"
+                 alt="Moto de práctica" onerror="this.onerror=null;this.src='https://placehold.co/300x150/e6e6e6/000000?text=Moto'">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= BENEFICIOS ================= -->
+  <section class="section-yellow" id="beneficios">
+    <div class="container">
+      <h2 class="section-title">Algunos beneficios</h2>
+      <div class="title-arrow white"></div>
+
+      <div class="row g-5 mt-3 justify-content-center">
+        <div class="col-md-6 d-flex align-items-center gap-4 benefit">
+          <div class="icon-circle"><i class="bi bi-house-door-fill"></i></div>
+          <div>
+            <h4>CLASES A DOMICILIO</h4>
+            <p>Recogemos al alumno en su casa o trabajo para que practique con comodidad en Lima y provincias.</p>
+          </div>
+        </div>
+        <div class="col-md-6 d-flex align-items-center gap-4 benefit">
+          <div class="icon-circle"><i class="bi bi-gift-fill"></i></div>
+          <div>
+            <h4>DESCUENTOS Y BONOS</h4>
+            <p>Si llevas más de un curso o recomiendas a un amigo, te regalamos clases extra y descuentos.</p>
+          </div>
+        </div>
+        <div class="col-md-6 d-flex align-items-center gap-4 benefit">
+          <div class="icon-circle"><i class="bi bi-hand-index-thumb-fill"></i></div>
+          <div>
+            <h4>RESERVA RÁPIDA</h4>
+            <p>Nuestro sistema es muy fácil y rápido. Agenda tu clase en menos de un minuto.</p>
+          </div>
+        </div>
+        <div class="col-md-6 d-flex align-items-center gap-4 benefit">
+          <div class="icon-circle"><i class="bi bi-shield-check"></i></div>
+          <div>
+            <h4>TRÁMITE MTC</h4>
+            <p>Te guiamos en el examen de reglas y manejo del MTC para que obtengas tu brevete sin estrés.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= RESERVA (FORMULARIO) ================= -->
+  <section class="section-white pb-5" id="reservar">
+    <div class="container">
+      <h2 class="section-title">Programa tu clase de manejo</h2>
+      <div class="title-arrow"></div>
+      <p class="text-center text-muted mb-5">Elige el día, tu licencia, el vehículo y a tu instructor favorito.</p>
+
+      <form id="bookingForm" class="booking-form needs-validation" novalidate>
+        <div class="row g-4">
+          <!-- Datos personales -->
+          <div class="col-md-4">
+            <label for="nombre" class="form-label">Nombre completo</label>
+            <input type="text" class="form-control" id="nombre" placeholder="Ej. María Pérez" required>
+            <div class="invalid-feedback">Ingresa tu nombre.</div>
+          </div>
+          <div class="col-md-4">
+            <label for="dni" class="form-label">DNI</label>
+            <input type="text" class="form-control" id="dni" placeholder="8 dígitos" pattern="[0-9]{8}" maxlength="8" inputmode="numeric" required>
+            <div class="invalid-feedback">El DNI debe tener 8 dígitos.</div>
+          </div>
+          <div class="col-md-4">
+            <label for="telefono" class="form-label">Celular</label>
+            <input type="tel" class="form-control" id="telefono" placeholder="9XX XXX XXX" pattern="9[0-9]{8}" maxlength="9" inputmode="numeric" required>
+            <div class="invalid-feedback">Ingresa un celular peruano válido (9 dígitos).</div>
+          </div>
+
+          <!-- Día de la semana -->
+          <div class="col-12">
+            <label class="form-label d-block">Día de la semana</label>
+            <div class="day-picker" id="dayPicker">
+              <input type="radio" class="btn-check" name="dia" id="d1" value="Lunes" required><label class="btn btn-day" for="d1">Lunes</label>
+              <input type="radio" class="btn-check" name="dia" id="d2" value="Martes"><label class="btn btn-day" for="d2">Martes</label>
+              <input type="radio" class="btn-check" name="dia" id="d3" value="Miércoles"><label class="btn btn-day" for="d3">Miércoles</label>
+              <input type="radio" class="btn-check" name="dia" id="d4" value="Jueves"><label class="btn btn-day" for="d4">Jueves</label>
+              <input type="radio" class="btn-check" name="dia" id="d5" value="Viernes"><label class="btn btn-day" for="d5">Viernes</label>
+              <input type="radio" class="btn-check" name="dia" id="d6" value="Sábado"><label class="btn btn-day" for="d6">Sábado</label>
+            </div>
+            <div class="text-danger small mt-1 d-none" id="diaError">Selecciona un día.</div>
+          </div>
+
+          <!-- Licencia / vehículo / hora -->
+          <div class="col-md-4">
+            <label for="licencia" class="form-label">Tipo de licencia</label>
+            <select class="form-select" id="licencia" required>
+              <option value="">Selecciona...</option>
+              <optgroup label="Clase A">
+                <option value="A-I">A-I · Autos y camionetas particulares</option>
+                <option value="A-IIa">A-IIa · Taxis y ambulancias</option>
+                <option value="A-IIb">A-IIb · Microbuses y camiones</option>
+                <option value="A-IIIa">A-IIIa · Buses interprovinciales</option>
+                <option value="A-IIIb">A-IIIb · Camiones y tráileres</option>
+                <option value="A-IIIc">A-IIIc · Todos los vehículos clase A</option>
+              </optgroup>
+              <optgroup label="Clase B">
+                <option value="B-IIa">B-IIa · Motocicletas</option>
+                <option value="B-IIb">B-IIb · Mototaxis y trimotos</option>
+                <option value="B-IIc">B-IIc · Motos de carga y menores</option>
+              </optgroup>
+            </select>
+            <div class="invalid-feedback">Elige una licencia.</div>
+          </div>
+          <div class="col-md-4">
+            <label for="vehiculo" class="form-label">Modelo de vehículo</label>
+            <select class="form-select" id="vehiculo" required disabled>
+              <option value="">Primero elige la licencia</option>
+            </select>
+            <div class="invalid-feedback">Elige un vehículo.</div>
+          </div>
+          <div class="col-md-4">
+            <label for="hora" class="form-label">Hora</label>
+            <select class="form-select" id="hora" required>
+              <option value="">Selecciona...</option>
+              <option>07:00 a.m.</option><option>08:00 a.m.</option><option>09:00 a.m.</option>
+              <option>10:00 a.m.</option><option>11:00 a.m.</option><option>12:00 p.m.</option>
+              <option>02:00 p.m.</option><option>03:00 p.m.</option><option>04:00 p.m.</option>
+              <option>05:00 p.m.</option><option>06:00 p.m.</option>
+            </select>
+            <div class="invalid-feedback">Elige una hora.</div>
+          </div>
+
+          <!-- Instructores -->
+          <div class="col-12">
+            <label class="form-label d-block">Elige a tu instructor</label>
+            <div class="row g-3" id="teachersList"></div>
+            <div class="text-danger small mt-1 d-none" id="profError">Selecciona un instructor.</div>
+          </div>
+
+          <div class="col-12 text-center mt-4">
+            <button type="submit" class="btn btn-yellow btn-lg px-5">Confirmar reserva</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- ================= CONTACTO ================= -->
+  <section class="section-dark text-center" id="contacto">
+    <div class="container">
+      <p class="contact-text">Si tienes alguna consulta o problema, no dudes en<br>llamarnos a nuestra línea gratuita</p>
+      <a href="tel:+51980100000" class="contact-phone">+51 980 100 000</a>
+      <div class="mt-4 social">
+        <a href="#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+        <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+        <a href="https://wa.me/51980100000" aria-label="WhatsApp"><i class="bi bi-whatsapp"></i></a>
+        <a href="#" aria-label="TikTok"><i class="bi bi-tiktok"></i></a>
+      </div>
+    </div>
+  </section>
+  <footer class="footer-bar text-center">
+    <small>© <span id="year"></span> ManejoFácil · Escuela de Manejo autorizada · Lima, Perú</small>
+  </footer>
+
+  <!-- Modal de confirmación -->
+  <div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header border-0">
+          <h5 class="modal-title fw-bold"><i class="bi bi-check-circle-fill text-warning me-2"></i>¡Reserva registrada!</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body" id="modalBody"></div>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-yellow" data-bs-dismiss="modal">Entendido</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="scripts.js"></script>
+</body>
+</html>

@@ -1,0 +1,158 @@
+:root {
+  --yellow: #fdc82f;
+  --yellow-dark: #f2b600;
+  --black: #0a0a0a;
+  --gray: #e6e6e6;
+  --gray-btn: #555555;
+}
+
+* { font-family: 'Montserrat', sans-serif; }
+html { scroll-behavior: smooth; }
+body { background: #fff; color: #111; overflow-x: hidden; }
+
+/* ---------- Botones ---------- */
+.btn { font-weight: 600; border-radius: 50px; transition: all .25s; }
+.btn-yellow {
+  background: var(--yellow); color: #000; border: none;
+  box-shadow: 0 6px 18px rgba(253, 200, 47, .45);
+}
+.btn-yellow:hover { background: var(--yellow-dark); color: #000; transform: translateY(-2px); }
+.btn-gray { background: var(--gray-btn); color: #fff; border: none; }
+.btn-gray:hover { background: #3d3d3d; color: #fff; transform: translateY(-2px); }
+
+/* ---------- Hero ---------- */
+.hero {
+  position: relative;
+  background: radial-gradient(circle at 20% 30%, #1d1d1d 0%, #050505 70%);
+  color: #fff;
+  padding-bottom: 170px;
+  overflow: hidden;
+}
+.logo {
+  font-weight: 900; font-size: 1.8rem; color: var(--yellow) !important; letter-spacing: -1px;
+}
+.logo span { color: #fff; }
+.menu-links .nav-link {
+  color: #fff; font-weight: 500; font-size: .95rem; padding: .6rem 1.2rem;
+  border-bottom: 2px solid transparent; margin-left: .3rem;
+}
+.menu-links .nav-link.active,
+.menu-links .nav-link:hover { border-bottom-color: var(--yellow); color: #fff; }
+
+.hero-content { padding-top: 90px; padding-bottom: 40px; }
+.hero-title { font-weight: 900; font-size: clamp(2.8rem, 6vw, 4.6rem); line-height: 1.05; margin-bottom: 1rem; }
+.hero-text { max-width: 440px; color: #ddd; margin-bottom: 1.8rem; }
+.hero-content .btn-lg { min-width: 170px; }
+
+.hero-car {
+  position: absolute; right: -60px; top: 110px; width: 55%; max-width: 780px;
+  height: 430px; object-fit: cover; border-radius: 40px 0 0 40px;
+  z-index: 1; filter: drop-shadow(0 25px 35px rgba(0,0,0,.6));
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 25%);
+          mask-image: linear-gradient(to right, transparent 0, #000 25%);
+}
+.hero-wave { position: absolute; bottom: -1px; left: 0; width: 100%; height: 130px; z-index: 2; }
+
+/* ---------- Secciones ---------- */
+.section-white { background: #fff; padding: 40px 0 90px; }
+.section-yellow { background: var(--yellow); padding: 70px 0 90px; }
+.section-dark { background: var(--black); padding: 70px 0 60px; }
+
+.section-title {
+  text-align: center; font-weight: 800; text-transform: uppercase;
+  font-size: clamp(1.3rem, 3vw, 1.7rem); margin-bottom: .6rem;
+}
+.title-arrow {
+  width: 0; height: 0; margin: 0 auto 2.5rem;
+  border-left: 12px solid transparent; border-right: 12px solid transparent;
+  border-top: 16px solid var(--yellow);
+}
+.title-arrow.white { border-top-color: #fff; }
+
+/* ---------- Tarjetas de licencias ---------- */
+.plan-card {
+  position: relative; background: var(--gray); border-radius: 26px;
+  padding: 30px 28px 110px; text-align: center; min-height: 290px;
+  transition: all .3s; cursor: pointer;
+}
+.plan-card h3 { font-size: 1rem; font-weight: 800; margin-bottom: 1rem; }
+.plan-card p { font-size: .9rem; font-weight: 500; margin-bottom: 1rem; }
+.plan-card img {
+  position: absolute; bottom: -25px; left: -20px; width: 210px; height: 120px;
+  object-fit: cover; border-radius: 16px; box-shadow: 0 12px 24px rgba(0,0,0,.25);
+}
+.plan-card .btn-plan {
+  background: var(--yellow); color: #000; font-size: .8rem; border-radius: 8px;
+  padding: .4rem 1.1rem; box-shadow: 0 5px 14px rgba(253,200,47,.5);
+}
+.plan-card.active { background: var(--yellow); }
+.plan-card.active .btn-plan { background: #000; color: #fff; box-shadow: 0 5px 14px rgba(0,0,0,.3); }
+.plan-card:hover { transform: translateY(-6px); }
+
+/* ---------- Beneficios ---------- */
+.benefit h4 { font-weight: 800; font-size: 1.2rem; margin-bottom: .4rem; }
+.benefit p { font-size: .9rem; font-weight: 500; margin: 0; max-width: 340px; }
+.icon-circle {
+  flex: 0 0 100px; height: 100px; background: #fff; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2.6rem; box-shadow: 0 14px 25px rgba(0,0,0,.15);
+}
+
+/* ---------- Formulario ---------- */
+.booking-form {
+  background: #fff; border-radius: 26px; padding: 40px 32px;
+  box-shadow: 0 20px 50px rgba(0,0,0,.12); border-top: 8px solid var(--yellow);
+}
+.form-label { font-weight: 700; font-size: .9rem; text-transform: uppercase; }
+.form-control, .form-select {
+  border-radius: 12px; padding: .75rem 1rem; background-color: #f6f6f6; border: 2px solid transparent;
+}
+.form-control:focus, .form-select:focus {
+  border-color: var(--yellow); box-shadow: 0 0 0 .25rem rgba(253,200,47,.25); background: #fff;
+}
+.day-picker { display: flex; flex-wrap: wrap; gap: .6rem; }
+.btn-day {
+  background: var(--gray); color: #000; border-radius: 50px; padding: .55rem 1.3rem; font-weight: 600;
+}
+.btn-check:checked + .btn-day { background: var(--yellow); color: #000; box-shadow: 0 5px 14px rgba(253,200,47,.5); }
+.btn-day:hover { background: #d6d6d6; }
+
+/* Tarjetas de instructores */
+.teacher-card {
+  position: relative; display: block; height: 100%; text-align: center;
+  background: var(--gray); border-radius: 20px; padding: 22px 16px;
+  cursor: pointer; transition: all .25s; border: 3px solid transparent;
+}
+.teacher-card img {
+  width: 90px; height: 90px; border-radius: 50%; object-fit: cover;
+  border: 4px solid #fff; box-shadow: 0 8px 18px rgba(0,0,0,.2); margin-bottom: 10px;
+}
+.teacher-card h5 { font-size: 1rem; font-weight: 800; margin-bottom: 2px; }
+.teacher-card .exp { font-size: .8rem; font-weight: 700; color: #000; background: var(--yellow); display: inline-block; padding: 2px 10px; border-radius: 20px; margin-bottom: 6px; }
+.teacher-card p { font-size: .78rem; margin: 0; color: #444; }
+.teacher-card .stars { color: #e5a400; font-size: .85rem; }
+.btn-check:checked + .teacher-card { background: #fff7d9; border-color: var(--yellow); transform: translateY(-4px); box-shadow: 0 14px 28px rgba(253,200,47,.45); }
+.teacher-card:hover { transform: translateY(-4px); }
+.teacher-card.disabled { opacity: .4; pointer-events: none; filter: grayscale(1); }
+.teacher-card .badge-no { position: absolute; top: 10px; right: 10px; font-size: .65rem; }
+
+/* ---------- Contacto ---------- */
+.contact-text { color: var(--yellow); font-weight: 700; font-size: clamp(1.1rem, 2.6vw, 1.6rem); line-height: 1.6; }
+.contact-phone { display: inline-block; color: #fff; font-weight: 800; font-size: clamp(2rem, 6vw, 3.2rem); text-decoration: none; margin-top: .6rem; }
+.contact-phone:hover { color: var(--yellow); }
+.social a { color: #fff; font-size: 1.6rem; margin: 0 .7rem; transition: color .2s; }
+.social a:hover { color: var(--yellow); }
+.footer-bar { background: #1c1c1c; color: #aaa; padding: 18px 0; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 991px) {
+  .hero { padding-bottom: 120px; }
+  .hero-content { padding-top: 50px; }
+  .hero-wave { height: 80px; }
+  .menu-links { background: rgba(0,0,0,.85); padding: 1rem; border-radius: 12px; }
+}
+@media (max-width: 575px) {
+  .booking-form { padding: 28px 18px; }
+  .icon-circle { flex-basis: 76px; height: 76px; font-size: 2rem; }
+  .plan-card img { width: 170px; height: 100px; }
+}
