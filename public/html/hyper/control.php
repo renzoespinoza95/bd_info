@@ -15,20 +15,25 @@ Flight::route('GET /', function () {
         LIMIT 1
     ", 'txt_inicio');
 
+    // txt_nosotros del negocio actual (reg_item -> reg_subcat -> reg_cat.neg_id)
     $nosotros_row = DB::queryFirstRow("
-        SELECT item_pag_web_id, titulo, subtitulo_detalle, contenido
-        FROM reg_item_pag_web
-        WHERE clave_txt = %s
+        SELECT i.item_pag_web_id, i.titulo, i.subtitulo_detalle, i.contenido
+        FROM reg_item_pag_web i
+        INNER JOIN reg_subcat_pag_web s ON s.subcat_pag_web_id = i.subcat_pag_web_id
+        INNER JOIN reg_cat_pag_web c ON c.cat_pag_web_id = s.cat_pag_web_id
+        WHERE i.clave_txt = %s AND c.neg_id = %i
+        ORDER BY i.item_pag_web_id ASC
         LIMIT 1
-    ", 'txt_nosotros');
+    ", 'txt_nosotros', $neg_id);
 
     $nosotros_item_id = $nosotros_row['item_pag_web_id'] ?? 0;
 
+    // 1ra imagen visible del item txt_nosotros del negocio actual
     $nosotros_img_row = DB::queryFirstRow("
         SELECT url_img 
         FROM reg_pag_item_img
         WHERE item_pag_web_id = %i AND is_visible = 1
-        ORDER BY orden ASC
+        ORDER BY orden ASC, pag_item_img_id ASC
         LIMIT 1
     ", $nosotros_item_id);
 

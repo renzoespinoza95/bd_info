@@ -4,132 +4,24 @@
         <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:14px;flex-wrap:wrap" data-reveal>
           <div>
             <span class="kicker">MIS TRABAJOS</span>
-            <h2 class="big" id="subcatDetailTitle" style="margin-top:6px">{{subcat_titulo}}</h2>
+            <h2 class="big" style="margin-top:6px">TODOS LOS DISEÑOS</h2>
           </div>
           <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-            <button class="menu-btn" id="openSubcatModal" style="background:var(--lime); color:var(--ink); border:3px solid var(--ink); box-shadow:4px 4px 0 var(--ink); font-family:var(--font-pixel); font-size:18px; padding:8px 16px;">
-              TIPOS DE DISEÑOS +
-            </button>
             <a class="btn" href="{{url_whatsapp}}" target="_blank" rel="noopener noreferrer">Solicitar información</a>
           </div>
         </div>
-        
-        <!-- Carrusel con Flechas Laterales y Soporte Táctil -->
-        <div style="position: relative; margin-top: 14px;" data-reveal data-noswipe>
-          <button id="carouselPrev" aria-label="Anterior" style="position: absolute; left: -20px; top: 45%; transform: translateY(-50%); z-index: 10; background: var(--lime); color: var(--ink); border: 3px solid var(--ink); width: 45px; height: 45px; font-family: var(--font-pixel); font-size: 20px; cursor: pointer; box-shadow: 3px 3px 0 var(--ink); display: flex; align-items: center; justify-content: center;">&larr;</button>
-          <button id="carouselNext" aria-label="Siguiente" style="position: absolute; right: -20px; top: 45%; transform: translateY(-50%); z-index: 10; background: var(--lime); color: var(--ink); border: 3px solid var(--ink); width: 45px; height: 45px; font-family: var(--font-pixel); font-size: 20px; cursor: pointer; box-shadow: 3px 3px 0 var(--ink); display: flex; align-items: center; justify-content: center;">&rarr;</button>
 
-          <div class="gal-strip" id="galSubStrip" style="display: flex; gap: 20px; overflow-x: auto; scroll-behavior: smooth; scroll-snap-type: x mandatory; padding-bottom: 10px; -webkit-overflow-scrolling: touch;" onclick="this.classList.toggle('active-touch')">
+        <!-- Todos los diseños de todas las subcategorías, en 2 columnas -->
+        <div class="design-grid" data-reveal>
+          {{#promociones}}
             {{#subcat_items}}
-            <figure class="shot" style="flex: 0 0 calc(50% - 10px); min-width: 280px; scroll-snap-align: start; position: relative; overflow: hidden; border: 3px solid var(--ink); background: var(--ink-2); box-shadow: 4px 4px 0 var(--ink); aspect-ratio: 4/3;">
-              <img src="{{img}}" alt="{{titulo}}" loading="lazy" style="display:block; width:100%; height:100%; object-fit:cover;">
-              
-              <div class="shot-overlay" style="position:absolute; inset:0; background:rgba(11,11,25,0.88); display:flex; flex-direction:column; justify-content:center; align-items:center; gap:10px; padding:15px; opacity:0; transition:opacity 0.3s ease;">
-                <span style="font-family:var(--font-display); font-size:18px; color:var(--lime); text-transform:uppercase; text-align:center;">{{titulo}}</span>
-                
-                {{#tiene_videos}}
-                  {{#videos}}
-                  <button type="button" class="btn fill btn-visualizar-vimeo" data-vimeo-code="{{codigo_web}}" style="background:var(--lime); color:var(--ink); border:2px solid var(--ink); box-shadow:3px 3px 0 var(--orange); font-family:var(--font-pixel); font-size:14px; padding:8px 14px; cursor:pointer; width:100%; text-align:center; position:relative; z-index:20;">
-                    {{titulo}} &rarr;
-                  </button>
-                  {{/videos}}
-                {{/tiene_videos}}
-                {{^tiene_videos}}
-                  <span style="font-family:var(--font-body); font-size:14px; color:#fff; text-align:center;">Sin videos disponibles</span>
-                {{/tiene_videos}}
-              </div>
-              
-              <figcaption class="cap" style="position:absolute; bottom:0; left:0; right:0; background:rgba(11,11,25,0.85); color:#fff; padding:8px 12px; font-family:var(--font-display); font-size:15px;">{{titulo}}</figcaption>
+            <figure class="design-card" data-title="{{titulo}}" data-img="{{img}}" tabindex="0" role="button" aria-label="Ver {{titulo}}">
+              <img src="{{img}}" alt="{{titulo}}" loading="lazy">
+              <figcaption class="design-cap">{{titulo}}</figcaption>
             </figure>
             {{/subcat_items}}
-            {{^subcat_items}}
-            <figure class="shot" style="flex:0 0 100%; border:3px solid var(--ink); background:var(--ink-2);">
-              <img src="https://picsum.photos/seed/subdefault/600/800" alt="Sin imágenes" loading="lazy">
-              <figcaption class="cap">Sin registros</figcaption>
-            </figure>
-            {{/subcat_items}}
-          </div>
-        </div>
-        
-        <div class="mono" id="subcatDetailDesc" data-reveal style="margin-top:12px;color:var(--ink); font-size:16px; line-height:1.5;">
-          {{{subcat_texto02}}}
+          {{/promociones}}
         </div>
       </div>
     </div>
   </section>
-
-  <!-- Modal con Reproductor de Vimeo idéntico al de slide_02_bio.html -->
-  <div id="imageModal" class="nosotros-fullscreen-modal" aria-hidden="true" style="display:none; position:fixed; inset:0; z-index:99999; background:rgba(11, 11, 11, 0.95); backdrop-filter:blur(8px); padding:40px; justify-content:center; align-items:center;">
-    
-    <!-- Botón Cerrar X en la parte central derecha del modal -->
-    <button id="closeImageModal" class="close-nosotros-modal" aria-label="Cerrar reproductor" type="button" style="position:absolute; right:30px; top:50%; transform:translateY(-50%); background:var(--orange); color:var(--ink); border:3px solid var(--ink); font-family:var(--font-pixel); font-size:24px; padding:6px 16px; cursor:pointer; box-shadow:4px 4px 0 var(--lime); z-index:100000;">
-      X
-    </button>
-
-    <!-- Contenedor de Video a Pantalla Completa -->
-    <div id="vimeoContainer" style="width:calc(100% - 80px); height:100%; max-width:1100px; max-height:85vh; display:flex; justify-content:center; align-items:center;">
-      <!-- Se inyectará el iframe del video dinámicamente -->
-    </div>
-  </div>
-
-<style>
-  .shot:hover .shot-overlay,
-  .shot.active-touch .shot-overlay {
-    opacity: 1 !important;
-  }
-  #galSubStrip::-webkit-scrollbar {
-    display: none;
-  }
-  #galSubStrip {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-</style>
-
-<script>
-  document.addEventListener("click", (e) => {
-    const btn = e.target.closest('.btn-visualizar-vimeo');
-    if (btn) {
-      e.preventDefault();
-      e.stopPropagation();
-      const rawCode = btn.getAttribute('data-vimeo-code');
-      let vcode = rawCode;
-      if (rawCode) {
-        const match = rawCode.match(/(\d+)/);
-        if (match) vcode = match[1];
-      }
-      
-      const modal = document.querySelector('#imageModal');
-      const vimeoContainer = document.querySelector('#vimeoContainer');
-      
-      if (vcode && vimeoContainer) {
-        vimeoContainer.innerHTML = `<iframe src="https://player.vimeo.com/video/${vcode}?autoplay=1" style="width:100%; height:100%; border:4px solid var(--lime); box-shadow:8px 8px 0 var(--orange);" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`;
-      }
-      if (modal) modal.style.display = "flex";
-    }
-
-    const btnClose = e.target.closest('#closeImageModal');
-    if (btnClose) {
-      e.preventDefault();
-      e.stopPropagation();
-      const modal = document.querySelector('#imageModal');
-      const vimeoContainer = document.querySelector('#vimeoContainer');
-      if (modal) modal.style.display = "none";
-      if (vimeoContainer) vimeoContainer.innerHTML = "";
-    }
-  });
-
-  document.addEventListener("DOMContentLoaded", () => {
-    const modal = document.querySelector('#imageModal');
-    const vimeoContainer = document.querySelector('#vimeoContainer');
-
-    if (modal) {
-      modal.addEventListener("click", (e) => {
-        if (e.target === modal) {
-          modal.style.display = "none";
-          if (vimeoContainer) vimeoContainer.innerHTML = "";
-        }
-      });
-    }
-  });
-</script>

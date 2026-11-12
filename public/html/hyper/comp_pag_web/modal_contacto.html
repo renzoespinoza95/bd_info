@@ -1,0 +1,121 @@
+<!-- Modal de diseños a pantalla completa (se usa desde el inicio y desde "Mis trabajos") -->
+<div id="imageModal" data-noswipe data-wa-url="{{url_whatsapp}}" aria-hidden="true" style="display:none; position:fixed; inset:0; z-index:99999; background:#0B0B0B;">
+
+  <div id="designScroller" class="design-scroller scrollable" tabindex="-1">
+    <div style="max-width:900px; margin:0 auto;">
+      <img id="designModalImg" alt="" style="display:block; width:100%; height:auto;">
+    </div>
+  </div>
+
+  <button id="designPrev" class="design-arrow" type="button" aria-label="Anterior" style="left:12px;">&larr;</button>
+  <button id="designNext" class="design-arrow" type="button" aria-label="Siguiente" style="right:12px;">&rarr;</button>
+
+  <button id="closeImageModal" type="button" aria-label="Cerrar" style="position:absolute; top:14px; right:14px; z-index:6; background:var(--orange); color:var(--ink); border:3px solid var(--ink); font-family:var(--font-pixel); font-size:20px; letter-spacing:1px; padding:6px 14px; cursor:pointer; box-shadow:4px 4px 0 var(--lime);">
+    CERRAR &#10005;
+  </button>
+
+  <div style="position:absolute; left:0; right:0; bottom:22px; display:flex; justify-content:center; pointer-events:none; z-index:6;">
+    <a id="designWant" class="menu-btn" href="#" target="_blank" rel="noopener noreferrer" style="pointer-events:auto; display:inline-block; background:var(--lime); color:var(--ink); border:3px solid var(--ink); box-shadow:4px 4px 0 var(--ink); font-family:var(--font-pixel); font-size:18px; padding:8px 16px;">
+      Lo quiero!
+    </a>
+  </div>
+</div>
+
+<style>
+  /* Con el modal abierto se ocultan la barra superior, el progreso y el footer */
+  body.modal-open .topbar,
+  body.modal-open .progress,
+  body.modal-open .footerbar {
+    display: none !important;
+  }
+
+  /* Cuadrícula de diseños: 2 columnas, una fila debajo de otra */
+  .design-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 14px;
+  }
+  .design-card {
+    position: relative;
+    margin: 0;
+    overflow: hidden;
+    border: 3px solid var(--ink);
+    background: var(--ink-2);
+    box-shadow: 4px 4px 0 var(--ink);
+    aspect-ratio: 4/3;
+    cursor: pointer;
+    transition: transform .18s var(--snap), box-shadow .18s var(--pop);
+  }
+  .design-card:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 var(--ink);
+  }
+  .design-card img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+  }
+  .design-card .design-cap {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(11, 11, 25, 0.85);
+    color: #fff;
+    padding: 8px 12px;
+    font-family: var(--font-display);
+    font-size: 15px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* En slides oscuros (inicio) el borde y la sombra deben verse */
+  .s-ink .design-card {
+    border-color: var(--lime);
+    box-shadow: 4px 4px 0 var(--orange);
+  }
+  .s-ink .design-card:hover {
+    box-shadow: 6px 6px 0 var(--orange);
+  }
+
+  /* Área con scroll vertical dentro del modal */
+  .design-scroller {
+    position: absolute;
+    inset: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0 64px 96px;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    outline: none;
+  }
+  .design-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--lime);
+    color: var(--ink);
+    border: 3px solid var(--ink);
+    box-shadow: 3px 3px 0 var(--orange);
+    font-family: var(--font-pixel);
+    font-size: 22px;
+    cursor: pointer;
+  }
+
+  @media (max-width: 640px) {
+    .design-grid { gap: 10px; }
+    .design-scroller { padding: 0 0 96px; }
+    .design-arrow { width: 38px; height: 38px; opacity: .92; }
+  }
+</style>

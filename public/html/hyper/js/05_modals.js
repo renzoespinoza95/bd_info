@@ -1,89 +1,110 @@
 (function() {
   "use strict";
 
-  const openSubcatModal = document.getElementById("openSubcatModal");
-  const closeSubcatModal = document.getElementById("closeSubcatModal");
-  const subcatModal = document.getElementById("subcatModal");
+  const modal = document.getElementById("imageModal");
+  const scroller = document.getElementById("designScroller");
+  const modalImg = document.getElementById("designModalImg");
+  const btnClose = document.getElementById("closeImageModal");
+  const btnPrev = document.getElementById("designPrev");
+  const btnNext = document.getElementById("designNext");
+  const btnWant = document.getElementById("designWant");
 
-  const imageModal = document.getElementById("imageModal");
-  const closeImageModal = document.getElementById("closeImageModal");
-  const vimeoContainer = document.getElementById("vimeoContainer");
+  if (!modal || !scroller || !modalImg) return;
 
-  function openSubcatPopup() {
-    if (!subcatModal) return;
-    subcatModal.classList.add("open");
-    subcatModal.setAttribute("aria-hidden", "false");
+  // Elementos que abren el modal: tarjetas de diseños y la imagen de "Quién soy"
+  const TRIGGER = ".design-card, .zoom-img";
+
+  let cards = [];
+  let current = 0;
+
+  function isOpen() {
+    return modal.style.display === "flex";
   }
 
-  function closeSubcatPopup() {
-    if (!subcatModal) return;
-    subcatModal.classList.remove("open");
-    subcatModal.setAttribute("aria-hidden", "true");
+  // Arma el enlace de WhatsApp reutilizando el número de url_whatsapp (se descarta su ?text=)
+  function buildWhatsappUrl(title) {
+    const base = (modal.getAttribute("data-wa-url") || "").split("?")[0];
+    const msg = 'Estimados, quiero la plantilla "' + title + '". ¿Me pueden brindar más información?';
+    return base + "?text=" + encodeURIComponent(msg);
   }
 
-  if (openSubcatModal) openSubcatModal.addEventListener("click", openSubcatPopup);
-  if (closeSubcatModal) closeSubcatModal.addEventListener("click", closeSubcatPopup);
+  function show(index) {
+    if (!cards.length) return;
+    current = (index + cards.length) % cards.length;
+    const card = cards[current];
+    const title = card.getAttribute("data-title") || "";
 
-  function openVimeoModal(videoCode) {
-    if (!imageModal || !vimeoContainer) return;
-    const vId = videoCode ? videoCode.trim() : "1216655914";
-    vimeoContainer.innerHTML = `<iframe src="https://player.vimeo.com/video/${vId}?autoplay=1" width="100%" height="100%" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="display:block;"></iframe>`;
-    imageModal.style.display = "flex";
-    imageModal.setAttribute("aria-hidden", "false");
+    modalImg.src = card.getAttribute("data-img") || "";
+    modalImg.alt = title;
+    scroller.scrollTop = 0;
+
+    if (btnWant) {
+      btnWant.href = buildWhatsappUrl(title);
+      // "Lo quiero!" solo aplica a diseños, no a la imagen de "Quién soy"
+      btnWant.style.display = card.hasAttribute("data-nowant") ? "none" : "inline-block";
+    }
   }
 
-  function closeVimeoModal() {
-    if (!imageModal || !vimeoContainer) return;
-    imageModal.style.display = "none";
-    imageModal.setAttribute("aria-hidden", "true");
-    vimeoContainer.innerHTML = '';
+  function openModal(card) {
+    // Diseños: la navegación recorre la cuadrícula donde se hizo clic.
+    // Imagen suelta (Quién soy): solo esa imagen.
+    const grid = card.closest(".design-grid");
+    cards = grid ? Array.from(grid.querySelectorAll(".design-card")) : [card];
+    const i = cards.indexOf(card);
+
+    // Con una sola imagen no hacen falta las flechas
+    const arrowDisplay = cards.length > 1 ? "flex" : "none";
+    if (btnPrev) btnPrev.style.display = arrowDisplay;
+    if (btnNext) btnNext.style.display = arrowDisplay;
+
+    show(i < 0 ? 0 : i);
+
+    modal.style.display = "flex";
+    modal.setAttribute("aria-hidden", "false");
+    document.body.classList.add("modal-open");
+    scroller.scrollTop = 0;
+    scroller.focus({ preventScroll: true });
   }
 
-  // Delegación de eventos para el botón dinámico de Vimeo y soporte táctil
+  function closeModal() {
+    modal.style.display = "none";
+    modal.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("modal-open");
+    modalImg.removeAttribute("src");
+  }
+
+  // Abrir al tocar una tarjeta o la imagen de "Quién soy"
   document.addEventListener("click", (e) => {
-    const btnVisualizar = e.target.closest(".btn-visualizar-vimeo");
-    if (btnVisualizar) {
-      e.preventDefault();
-      const code = btnVisualizar.getAttribute("data-vimeo-code");
-      openVimeoModal(code);
-      return;
-    }
-
-    const shot = e.target.closest(".shot");
-    if (shot && !e.target.closest(".btn-visualizar-vimeo")) {
-      document.querySelectorAll(".shot").forEach(s => {
-        if (s !== shot) s.classList.remove("active-touch");
-      });
-      shot.classList.toggle("active-touch");
-    }
+    const card = e.target.closest(TRIGGER);
+    if (card) openModal(card);
   });
 
-  if (closeImageModal) closeImageModal.addEventListener("click", closeVimeoModal);
-  
-  if (imageModal) {
-    imageModal.addEventListener("click", (e) => {
-      if (e.target === imageModal) closeVimeoModal();
-    });
-  }
+  if (btnPrev) btnPrev.addEventListener("click", () => show(current - 1));
+  if (btnNext) btnNext.addEventListener("click", () => show(current + 1));
+  if (btnClose) btnClose.addEventListener("click", closeModal);
 
-  // Lógica de desplazamiento por flechas y touch para el carrusel de slide_10
-  document.addEventListener("click", (e) => {
-    const prevBtn = e.target.closest("#carouselPrev");
-    const nextBtn = e.target.closest("#carouselNext");
-    const strip = document.getElementById("galSubStrip");
-    if (!strip) return;
-
-    if (prevBtn) {
-      e.preventDefault();
-      strip.scrollBy({ left: -320, behavior: 'smooth' });
+  // Fase de captura: corre antes que el manejador de teclado de 04_main.js
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      const card = e.target.closest && e.target.closest(TRIGGER);
+      if (card && !isOpen()) {
+        e.preventDefault();
+        openModal(card);
+        return;
+      }
     }
-    if (nextBtn) {
+    if (!isOpen()) return;
+    if (e.key === "Escape") {
       e.preventDefault();
-      strip.scrollBy({ left: 320, behavior: 'smooth' });
+      closeModal();
+    } else if (e.key === "ArrowRight") {
+      e.preventDefault();
+      if (cards.length > 1) show(current + 1);
+    } else if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      if (cards.length > 1) show(current - 1);
     }
-  });
+  }, true);
 
-  window.closeSubcatPopup = closeSubcatPopup;
-  window.openVimeoModal = openVimeoModal;
-  window.closeVimeoModal = closeVimeoModal;
+  window.closeDesignModal = closeModal;
 })();
