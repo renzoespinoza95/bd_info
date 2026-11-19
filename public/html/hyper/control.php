@@ -3,29 +3,67 @@
 include_once __DIR__ . '/api/control01.php';
 
 Flight::route('GET /', function () {
-    global $varhost, $apphost, $neg_id; // Integración de la variable global neg_id en memoria
-    
-    perso::visita();    
+    global $varhost, $apphost, $neg_id; // neg_id global del negocio actual
+
+    perso::visita();
     $mis_visitas = perso::vari("visitas");
 
-    $inicio = DB::queryFirstRow("
-        SELECT titulo, subtitulo_detalle, contenido
-        FROM reg_item_pag_web
-        WHERE clave_txt = %s
-        LIMIT 1
-    ", 'txt_inicio');
+    // Helper: devuelve un item de texto (clave_txt) SOLO del negocio actual
+    // (reg_item_pag_web -> reg_subcat_pag_web -> reg_cat_pag_web.neg_id)
+    $txt_neg = function ($clave) use ($neg_id) {
+        return DB::queryFirstRow("
+            SELECT i.item_pag_web_id, i.titulo, i.subtitulo_detalle, i.contenido
+            FROM reg_item_pag_web i
+            INNER JOIN reg_subcat_pag_web s ON s.subcat_pag_web_id = i.subcat_pag_web_id
+            INNER JOIN reg_cat_pag_web c ON c.cat_pag_web_id = s.cat_pag_web_id
+            WHERE i.clave_txt = %s AND c.neg_id = %i
+            ORDER BY i.item_pag_web_id ASC
+            LIMIT 1
+        ", $clave, $neg_id);
+    };
 
-    // txt_nosotros del negocio actual (reg_item -> reg_subcat -> reg_cat.neg_id)
-    $nosotros_row = DB::queryFirstRow("
-        SELECT i.item_pag_web_id, i.titulo, i.subtitulo_detalle, i.contenido
-        FROM reg_item_pag_web i
-        INNER JOIN reg_subcat_pag_web s ON s.subcat_pag_web_id = i.subcat_pag_web_id
-        INNER JOIN reg_cat_pag_web c ON c.cat_pag_web_id = s.cat_pag_web_id
-        WHERE i.clave_txt = %s AND c.neg_id = %i
-        ORDER BY i.item_pag_web_id ASC
-        LIMIT 1
-    ", 'txt_nosotros', $neg_id);
+    // Helper: item de texto dentro de una subcategoría concreta (por clave_txt) del negocio actual
+    $txt_neg_subcat = function ($subcat_clave, $clave) use ($neg_id) {
+        return DB::queryFirstRow("
+            SELECT i.contenido
+            FROM reg_item_pag_web i
+            INNER JOIN reg_subcat_pag_web s ON s.subcat_pag_web_id = i.subcat_pag_web_id
+            INNER JOIN reg_cat_pag_web c ON c.cat_pag_web_id = s.cat_pag_web_id
+            WHERE s.clave_txt = %s AND i.clave_txt = %s AND c.neg_id = %i
+            ORDER BY i.item_pag_web_id ASC
+            LIMIT 1
+        ", $subcat_clave, $clave, $neg_id);
+    };
 
+    // Helper: convierte el codigo_web de un video en la URL de embed (Vimeo / YouTube / URL directa)
+    $video_src = function ($raw) {
+        $raw = trim((string)$raw);
+        if ($raw === '') return '';
+        if (stripos($raw, '<iframe') !== false && preg_match('/src=["\']([^"\']+)["\']/i', $raw, $m)) {
+            $raw = $m[1];
+        }
+        if (preg_match('/^\d+$/', $raw)) {
+            return 'https://player.vimeo.com/video/' . $raw . '?autoplay=1';
+        }
+        if (preg_match('~vimeo\.com/(?:video/)?(\d+)~i', $raw, $m)) {
+            return 'https://player.vimeo.com/video/' . $m[1] . '?autoplay=1';
+        }
+        if (preg_match('~(?:youtu\.be/|youtube\.com/(?:watch\?v=|embed/|shorts/))([\w-]{11})~i', $raw, $m)) {
+            return 'https://www.youtube.com/embed/' . $m[1] . '?autoplay=1';
+        }
+        if (preg_match('~^https?://~i', $raw)) {
+            return $raw;
+        }
+        if (preg_match('/(\d+)/', $raw, $m)) {
+            return 'https://player.vimeo.com/video/' . $m[1] . '?autoplay=1';
+        }
+        return '';
+    };
+
+    $inicio = $txt_neg('txt_inicio');
+
+    // txt_nosotros del negocio actual
+    $nosotros_row = $txt_neg('txt_nosotros');
     $nosotros_item_id = $nosotros_row['item_pag_web_id'] ?? 0;
 
     // 1ra imagen visible del item txt_nosotros del negocio actual
@@ -48,7 +86,7 @@ Flight::route('GET /', function () {
 
     $tiene_videos_nosotros = !empty($nosotros_videos);
     $raw_codigo_web = $tiene_videos_nosotros ? $nosotros_videos[0]['codigo_web'] : '';
-    
+
     $nosotros_video_id = '';
     if (!empty($raw_codigo_web)) {
         if (preg_match('/(\d+)/', $raw_codigo_web, $matches)) {
@@ -58,53 +96,35 @@ Flight::route('GET /', function () {
         }
     }
 
-    // Extracción de enlaces dinámicos para TikTok y Facebook desde reg_item_pag_web
-    $tiktok_row = DB::queryFirstRow("
-        SELECT contenido 
-        FROM reg_item_pag_web 
-        WHERE clave_txt = %s 
-        LIMIT 1
-    ", 'txt_tiktok');
-
-    $facebook_row = DB::queryFirstRow("
-        SELECT contenido 
-        FROM reg_item_pag_web 
-        WHERE clave_txt = %s 
-        LIMIT 1
-    ", 'txt_facebook');
+    // Enlaces dinámicos de TikTok y Facebook (filtrados por neg_id)
+    $tiktok_row = $txt_neg('txt_tiktok');
+    $facebook_row = $txt_neg('txt_facebook');
 
     $url_tiktok = $tiktok_row['contenido'] ?? 'https://www.tiktok.com';
     $url_facebook = $facebook_row['contenido'] ?? 'https://www.facebook.com';
 
-    $meta_keywords_row = DB::queryFirstRow("
-        SELECT i.contenido 
-        FROM reg_item_pag_web i
-        INNER JOIN reg_subcat_pag_web s ON s.subcat_pag_web_id = i.subcat_pag_web_id
-        WHERE s.clave_txt = %s AND i.clave_txt = %s
-        LIMIT 1
-    ", 'txt_meta', 'txt_meta_keywords');
-
-    $meta_desc_row = DB::queryFirstRow("
-        SELECT i.contenido 
-        FROM reg_item_pag_web i
-        INNER JOIN reg_subcat_pag_web s ON s.subcat_pag_web_id = i.subcat_pag_web_id
-        WHERE s.clave_txt = %s AND i.clave_txt = %s
-        LIMIT 1
-    ", 'txt_meta', 'txt_meta_description');
+    // Meta tags (filtrados por neg_id)
+    $meta_keywords_row = $txt_neg_subcat('txt_meta', 'txt_meta_keywords');
+    $meta_desc_row = $txt_neg_subcat('txt_meta', 'txt_meta_description');
 
     $meta_description = $meta_desc_row['contenido'] ?? 'mi meta_description';
     $meta_keywords = $meta_keywords_row['contenido'] ?? 'mi meta_keywords';
-    
+
     $nosotros_titulo = $nosotros_row['titulo'] ?? 'NOSOTROS';
     $nosotros_contenido = $nosotros_row['contenido'] ?? 'Información institucional de la empresa.';
 
-    $promos_sub_row = DB::queryFirstRow("SELECT contenido FROM reg_item_pag_web WHERE clave_txt = %s LIMIT 1", 'txt_subtitulo_promocion');
-    $promos_tit_row = DB::queryFirstRow("SELECT contenido FROM reg_item_pag_web WHERE clave_txt = %s LIMIT 1", 'txt_titulo_promocion');
-    
-    $subtitulo_promocion = $promos_sub_row['contenido'] ?? 'Catálogo & Servicios';
-    $titulo_promocion = $promos_tit_row['contenido'] ?? 'REPARACIONES E INGENIERÍA';
+    // Títulos de la sección de promociones (filtrados por neg_id)
+    $promos_sub_row = $txt_neg('txt_subtitulo_promocion');
+    $promos_tit_row = $txt_neg('txt_titulo_promocion');
 
-    // Obtención de los datos del negocio actual mediante el $neg_id global
+    $subtitulo_promocion = $promos_sub_row['contenido'] ?? 'Catálogo & Servicios';
+    $titulo_promocion = $promos_tit_row['contenido'] ?? 'NUEVOS MODELOS';
+
+    // "MIS RECIENTES TRABAJOS" -> "NUEVOS MODELOS" (aunque el texto venga de la BD)
+    $subtitulo_promocion = str_ireplace('mis recientes trabajos', 'NUEVOS MODELOS', $subtitulo_promocion);
+    $titulo_promocion = str_ireplace('mis recientes trabajos', 'NUEVOS MODELOS', $titulo_promocion);
+
+    // Datos del negocio actual mediante el $neg_id global
     $negocio = DB::queryFirstRow("SELECT neg_id, nombre, img_logo, celular_informes FROM reg_neg WHERE neg_id = %i LIMIT 1", $neg_id);
     $nombre_negocio = $negocio['nombre'] ?? 'mi nombre_negocio';
     $img_logo = $negocio['img_logo'] ?: 'https://barsi-img.b-cdn.net/recursos/logo-regentis.png';
@@ -163,17 +183,19 @@ Flight::route('GET /', function () {
     ];
 
     if ($cat_disenos) {
+        // Se excluye la subcategoría txt_sistemas: tiene su propia pantalla "Sistemas"
         $subcats_raw = DB::query("
             SELECT subcat_pag_web_id, titulo, url_img, texto01, texto02
             FROM reg_subcat_pag_web
             WHERE cat_pag_web_id = %i AND is_visible = 1
+              AND (clave_txt IS NULL OR clave_txt != %s)
             ORDER BY orden ASC, subcat_pag_web_id ASC
-        ", $cat_disenos['cat_pag_web_id']);
+        ", $cat_disenos['cat_pag_web_id'], 'txt_sistemas');
 
         $idx = 0;
         foreach ($subcats_raw as $sc) {
             $subcat_id = $sc['subcat_pag_web_id'];
-            
+
             $items_raw = DB::query("
                 SELECT i.item_pag_web_id, i.titulo AS item_titulo, i.contenido, img.url_img AS item_url_img
                 FROM reg_item_pag_web i
@@ -185,7 +207,7 @@ Flight::route('GET /', function () {
             $galeria_items = [];
             foreach ($items_raw as $it) {
                 $item_id = $it['item_pag_web_id'];
-                
+
                 $videos_raw = DB::query("
                     SELECT pag_item_vid_id, titulo AS video_titulo, codigo_web, url_img
                     FROM reg_pag_item_vid
@@ -259,13 +281,58 @@ Flight::route('GET /', function () {
         ];
     }
 
+    // ==========================================
+    // SISTEMAS: subcategoría con clave_txt = txt_sistemas (dentro de la categoría
+    // del negocio actual, ej. txt_disenos). Por cada item: 1ra imagen visible
+    // (miniatura) y 1er video visible (modal).
+    // ==========================================
+    $sistemas = [];
+
+    $sis_items = DB::query("
+        SELECT i.item_pag_web_id, i.titulo, s.url_img AS subcat_img
+        FROM reg_item_pag_web i
+        INNER JOIN reg_subcat_pag_web s ON s.subcat_pag_web_id = i.subcat_pag_web_id
+        INNER JOIN reg_cat_pag_web c ON c.cat_pag_web_id = s.cat_pag_web_id
+        WHERE s.clave_txt = %s AND c.neg_id = %i AND s.is_visible = 1 AND i.is_visible = 1
+        ORDER BY i.orden ASC, i.item_pag_web_id ASC
+    ", 'txt_sistemas', $neg_id);
+
+    foreach ($sis_items as $si) {
+        $img_row = DB::queryFirstRow("
+            SELECT url_img
+            FROM reg_pag_item_img
+            WHERE item_pag_web_id = %i AND is_visible = 1
+            ORDER BY orden ASC, pag_item_img_id ASC
+            LIMIT 1
+        ", $si['item_pag_web_id']);
+
+        $vid_row = DB::queryFirstRow("
+            SELECT codigo_web
+            FROM reg_pag_item_vid
+            WHERE item_pag_web_id = %i AND is_visible = 1
+            ORDER BY orden ASC, pag_item_vid_id ASC
+            LIMIT 1
+        ", $si['item_pag_web_id']);
+
+        $src = $video_src($vid_row['codigo_web'] ?? '');
+
+        $sistemas[] = [
+            'titulo'      => $si['titulo'] ?: 'SISTEMA',
+            'img'         => ($img_row['url_img'] ?? '') ?: ($si['subcat_img'] ?: 'https://picsum.photos/seed/sistema/600/450'),
+            'video_src'   => $src,
+            'tiene_video' => ($src !== '')
+        ];
+    }
+
+    // Marquesina: SOLO items del negocio actual (reg_cat_pag_web.neg_id = $neg_id)
     $marquesina_items = DB::query("
         SELECT i.contenido 
         FROM reg_item_pag_web i
         INNER JOIN reg_subcat_pag_web s ON s.subcat_pag_web_id = i.subcat_pag_web_id
-        WHERE s.clave_txt = %s AND i.is_visible = 1
+        INNER JOIN reg_cat_pag_web c ON c.cat_pag_web_id = s.cat_pag_web_id
+        WHERE s.clave_txt = %s AND i.is_visible = 1 AND c.neg_id = %i
         ORDER BY i.orden ASC, i.item_pag_web_id ASC
-    ", 'txt_marquesina');
+    ", 'txt_marquesina', $neg_id);
 
     $marquesina = [];
     if (!empty($marquesina_items)) {
@@ -276,7 +343,8 @@ Flight::route('GET /', function () {
         }
     }
     if (empty($marquesina)) {
-        $marquesina = ['New album "Maximum Volume" out now', '2.4M monthly listeners', 'As loud as legally allowed'];
+        // Sin textos propios: se muestra el nombre del negocio (nunca datos de otro negocio)
+        $marquesina = [$nombre_negocio];
     }
 
     $data = [
@@ -303,6 +371,7 @@ Flight::route('GET /', function () {
         'base'                    => $varhost, 
         'sliders'                 => $sliders,
         'promociones'             => $promociones,
+        'sistemas'                => $sistemas,
         'marquesina_words'        => $marquesina,
         'releases'                => [['titulo' => '1000 Gigabytes Of Luv', 'tipo' => 'Single', 'anio' => '2025']],
         'stats'                   => [['n' => '2.4M', 'l' => 'Monthly Listeners']],
@@ -324,6 +393,7 @@ Flight::route('GET /', function () {
         'slide_08_contact'    => file_get_contents(VARPATH . '/public/html/hyper/comp_pag_web/slide_08_contact.html'),
         'slide_09_templatemo' => file_get_contents(VARPATH . '/public/html/hyper/comp_pag_web/slide_09_templatemo.html'),
         'slide_10_subcategoria' => file_get_contents(VARPATH . '/public/html/hyper/comp_pag_web/slide_10_subcategoria.html'),
+        'slide_11_sistemas'   => file_get_contents(VARPATH . '/public/html/hyper/comp_pag_web/slide_11_sistemas.html'),
         'navpop_02_menusubcat' => file_get_contents(VARPATH . '/public/html/hyper/comp_pag_web/navpop_02_menusubcat.html'),
         'footerbar'           => file_get_contents(VARPATH . '/public/html/hyper/comp_pag_web/footerbar.html'),
         'nav_pop'             => file_get_contents(VARPATH . '/public/html/hyper/comp_pag_web/nav_pop.html'),

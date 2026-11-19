@@ -1,12 +1,13 @@
 <?php
 // ==========================================
 // ENDPOINT GET /radix (Radiografía de la Plantilla con Validación y Negocio Global)
+// Todas las consultas con relación a neg_id filtran por el $neg_id global
 // ==========================================
 Flight::route('GET /radix', function () {
     include DEFINITION;
-    global $neg_id; // Obtenemos el neg_id global en memoria
+    global $neg_id; // neg_id global en memoria
 
-    // 🔥 Validación segura usando la clase perso::vari()
+    // Validación segura usando la clase perso::vari()
     $radix_val = 0;
     try {
         if (class_exists('perso') && method_exists('perso', 'vari')) {
@@ -25,28 +26,45 @@ Flight::route('GET /radix', function () {
         return;
     }
 
-    // 1. Obtener todas las claves_txt de la BD
-    $items_claves = DB::query("SELECT clave_txt, titulo FROM reg_item_pag_web WHERE clave_txt IS NOT NULL AND clave_txt != ''");
-    $subcat_claves = DB::query("SELECT clave_txt, titulo FROM reg_subcat_pag_web WHERE clave_txt IS NOT NULL AND clave_txt != ''");
-    $cat_claves = DB::query("SELECT clave_txt, titulo FROM reg_cat_pag_web WHERE clave_txt IS NOT NULL AND clave_txt != ''");
+    // 1. Claves_txt del negocio actual (cat.neg_id = $neg_id)
+    $items_claves = DB::query("
+        SELECT i.clave_txt, i.titulo
+        FROM reg_item_pag_web i
+        INNER JOIN reg_subcat_pag_web s ON s.subcat_pag_web_id = i.subcat_pag_web_id
+        INNER JOIN reg_cat_pag_web c ON c.cat_pag_web_id = s.cat_pag_web_id
+        WHERE c.neg_id = %i AND i.clave_txt IS NOT NULL AND i.clave_txt != ''
+    ", $neg_id);
 
-    // 2. Obtener la jerarquía de Categorías, Subcategorías y sus Relaciones filtradas por el neg_id global
+    $subcat_claves = DB::query("
+        SELECT s.clave_txt, s.titulo
+        FROM reg_subcat_pag_web s
+        INNER JOIN reg_cat_pag_web c ON c.cat_pag_web_id = s.cat_pag_web_id
+        WHERE c.neg_id = %i AND s.clave_txt IS NOT NULL AND s.clave_txt != ''
+    ", $neg_id);
+
+    $cat_claves = DB::query("
+        SELECT clave_txt, titulo
+        FROM reg_cat_pag_web
+        WHERE neg_id = %i AND clave_txt IS NOT NULL AND clave_txt != ''
+    ", $neg_id);
+
+    // 2. Jerarquía de Categorías y Subcategorías filtrada por el neg_id global
     $categorias = DB::query("
         SELECT c.cat_pag_web_id, c.titulo as cat_titulo, c.clave_txt as cat_clave,
                s.subcat_pag_web_id, s.titulo as subcat_titulo, s.clave_txt as subcat_clave
         FROM reg_cat_pag_web c
         LEFT JOIN reg_subcat_pag_web s ON s.cat_pag_web_id = c.cat_pag_web_id
-        WHERE c.neg_id = %i OR c.neg_id IS NULL
+        WHERE c.neg_id = %i
         ORDER BY c.orden ASC, s.orden ASC
     ", $neg_id);
 
-    // 3. Obtener variables del sistema (reg_vari)
+    // 3. Variables del sistema (reg_vari)
     $variables = DB::query("SELECT nombre, valor FROM reg_vari");
 
-    // 4. Obtener datos del negocio actual utilizando la variable global $neg_id
+    // 4. Datos del negocio actual utilizando la variable global $neg_id
     $negocio = DB::queryFirstRow("SELECT nombre FROM reg_neg WHERE neg_id = %i LIMIT 1", $neg_id);
     $nombre_negocio = $negocio['nombre'] ?? 'HYPRLUV';
-    
+
     $visitas = 0;
     try {
         $visitas = class_exists('perso') ? perso::vari("visitas") : 0;
@@ -70,7 +88,7 @@ Flight::route('GET /radix', function () {
     }
     $ascii .= "\n";
 
-    $ascii .= "[+] CLAVES_TXT REGISTRADAS\n";
+    $ascii .= "[+] CLAVES_TXT REGISTRADAS (solo del negocio actual)\n";
     $ascii .= "    --- Categorias (reg_cat_pag_web) ---\n";
     foreach ($cat_claves as $cc) {
         $ascii .= "        * " . ($cc['clave_txt'] ?: 'SIN CLAVE') . " [" . $cc['titulo'] . "]\n";

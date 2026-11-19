@@ -63,7 +63,7 @@
     modal.setAttribute("aria-hidden", "false");
     document.body.classList.add("modal-open");
     scroller.scrollTop = 0;
-    scroller.focus({ preventScroll: true });
+    try { scroller.focus({ preventScroll: true }); } catch (err) { /* sin foco no pasa nada */ }
   }
 
   function closeModal() {
@@ -73,9 +73,28 @@
     modalImg.removeAttribute("src");
   }
 
-  // Abrir al tocar una tarjeta o la imagen de "Quién soy"
+  // 1) Listener directo en cada tarjeta (el más fiable en Opera y demás navegadores)
+  function bindTriggers() {
+    document.querySelectorAll(TRIGGER).forEach((el) => {
+      if (el.dataset.modalBound === "1") return;
+      el.dataset.modalBound = "1";
+      el.addEventListener("click", (e) => {
+        e.preventDefault();
+        if (!isOpen()) openModal(el);
+      });
+    });
+  }
+  bindTriggers();
+
+  // 2) Respaldo delegado: si el clic cae en el contenedor (p. ej. por un desplazamiento
+  //    del elemento justo al hacer clic), se busca la tarjeta que está bajo el puntero.
   document.addEventListener("click", (e) => {
-    const card = e.target.closest(TRIGGER);
+    if (isOpen()) return;
+    let card = e.target.closest && e.target.closest(TRIGGER);
+    if (!card && typeof e.clientX === "number" && e.target.closest && e.target.closest(".design-grid")) {
+      const under = document.elementFromPoint(e.clientX, e.clientY);
+      card = under && under.closest ? under.closest(TRIGGER) : null;
+    }
     if (card) openModal(card);
   });
 

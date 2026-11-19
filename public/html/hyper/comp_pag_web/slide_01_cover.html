@@ -1,52 +1,168 @@
+<!-- Fuente llamativa para el texto del slider -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet">
+
+<style>
+  /* ===== Slider principal ===== */
+  .industrial-slider-container { position:relative; width:100%; flex-shrink:0; }
+
+  .ind-stage {
+    position:relative; width:100%;
+    height:clamp(340px, 50vh, 520px); min-height:320px;
+    display:flex; align-items:center; overflow:hidden;
+    background:var(--ink); flex-shrink:0;
+  }
+  .industrial-slides-track {
+    position:absolute; inset:0; display:flex;
+    transition:transform 0.5s ease-in-out;
+  }
+  .industrial-slide { min-width:100%; height:100%; position:relative; }
+  .industrial-slide img { width:100%; height:100%; object-fit:cover; display:block; }
+
+  /* Capa de texto: el padding lateral reserva el espacio de las flechas */
+  .ind-overlay {
+    position:relative; z-index:10; width:100%;
+    padding:0 max(var(--edge), 64px);
+    pointer-events:none;
+  }
+  .industrial-content { pointer-events:auto; }
+
+  /* Etiqueta superior */
+  .ind-sticker {
+    background:var(--orange); color:var(--white); border:3px solid var(--ink);
+    font-family:"Lilita One", var(--font-display); letter-spacing:1px;
+    font-size:clamp(16px, 1.8vw, 24px);
+    padding:7px 16px 5px; margin-bottom:12px;
+    display:inline-block; box-shadow:4px 4px 0 var(--ink);
+  }
+
+  /* Texto principal: fuente llamativa, relleno lima, borde oscuro grueso y sombra naranja */
+  .industrial-content h1.huge {
+    font-family:"Lilita One", "Anton", var(--font-display), sans-serif;
+    font-weight:400;
+    color:var(--lime);
+    font-size:clamp(34px, 6vw, 72px);
+    line-height:1.05;
+    letter-spacing:1px;
+    max-width:900px;
+    overflow-wrap:anywhere;
+    /* borde oscuro alrededor de las letras + sombra naranja */
+    text-shadow:
+      -3px -3px 0 var(--ink),  3px -3px 0 var(--ink),
+      -3px  3px 0 var(--ink),  3px  3px 0 var(--ink),
+       0   -3px 0 var(--ink),  0    3px 0 var(--ink),
+      -3px  0   0 var(--ink),  3px  0   0 var(--ink),
+       6px  7px 0 var(--orange);
+  }
+
+  .ind-arrow {
+    position:absolute; top:50%; transform:translateY(-50%); z-index:20;
+    background:rgba(11,11,11,0.75); border:2px solid var(--lime); color:var(--lime);
+    width:42px; height:42px; display:grid; place-items:center; cursor:pointer; transition:0.2s;
+  }
+  .ind-arrow svg { width:20px; height:20px; }
+  .ind-prev { left:12px; }
+  .ind-next { right:12px; }
+
+  /* Botón fijo, centrado en la parte inferior del slider (visible en todos los sliders) */
+  .ind-cta {
+    position:absolute; left:50%; bottom:16px; transform:translateX(-50%);
+    z-index:25; white-space:nowrap;
+  }
+  .ind-cta .btn {
+    background:var(--lime); color:var(--ink); border:3px solid var(--ink);
+    box-shadow:6px 6px 0 var(--orange); font-family:var(--font-pixel);
+    letter-spacing:1px; padding:15px 30px;
+    font-size:clamp(21px, 2.1vw, 27px);
+  }
+
+  /* ===== Responsive: imagen completa + texto que no pasa las flechas ===== */
+  @media (max-width: 768px) {
+    .ind-stage { height:auto; min-height:0; display:block; }
+    .industrial-slides-track { position:relative; inset:auto; width:100%; align-items:center; }
+    .industrial-slide { height:auto; display:flex; align-items:center; justify-content:center; }
+    .industrial-slide img { width:100%; height:auto; object-fit:contain; }
+
+    .ind-overlay {
+      position:absolute; inset:0; display:flex; align-items:center;
+      padding:0 56px; /* 8px margen + 36px flecha + 12px aire */
+    }
+    .industrial-content { width:100%; }
+    .ind-sticker { font-size:15px; padding:5px 11px 3px; margin-bottom:8px; box-shadow:3px 3px 0 var(--ink); }
+    .industrial-content h1.huge {
+      font-size:clamp(24px, 7.4vw, 38px);
+      line-height:1.08; max-width:100%;
+      text-shadow:
+        -2px -2px 0 var(--ink),  2px -2px 0 var(--ink),
+        -2px  2px 0 var(--ink),  2px  2px 0 var(--ink),
+         0   -2px 0 var(--ink),  0    2px 0 var(--ink),
+        -2px  0   0 var(--ink),  2px  0   0 var(--ink),
+         4px  5px 0 var(--orange);
+    }
+
+    .ind-arrow { width:36px; height:36px; }
+    .ind-arrow svg { width:18px; height:18px; }
+    .ind-prev { left:8px; }
+    .ind-next { right:8px; }
+
+    .ind-cta { bottom:12px; }
+  }
+</style>
+
 <section class="slide s-ink active" data-slide="0">
     <div class="inner scrollable" style="padding: calc(var(--bar) + 10px) 0 calc(var(--foot) + 20px);">
-      
-      <!-- Contenedor del Banner Slider Principal -->
-      <div class="industrial-slider-container" style="position:relative; width:100%; height:clamp(340px, 50vh, 520px); min-height:320px; display:flex; align-items:center; overflow:hidden;">
-        
-        <!-- Pistas de diapositivas -->
-        <div class="industrial-slides-track" id="industrialTrack" style="position:absolute; inset:0; display:flex; transition:transform 0.5s ease-in-out;">
-          {{#sliders}}
-          <div class="industrial-slide" style="min-width:100%; height:100%; position:relative;">
-            <img src="{{img}}" alt="Banner Industrial" style="width:100%; height:100%; object-fit:cover; display:block;">
-          </div>
-          {{/sliders}}
-        </div>
 
-        <!-- Capa de contenido superpuesto -->
-        <div class="wrap" style="position:relative; z-index:10; width:100%; padding:0 var(--edge); pointer-events:none;">
-          <div class="industrial-content" style="pointer-events:auto;">
+      <!-- Contenedor del Banner Slider Principal -->
+      <div class="industrial-slider-container">
+
+        <div class="ind-stage">
+
+          <!-- Pistas de diapositivas -->
+          <div class="industrial-slides-track" id="industrialTrack">
             {{#sliders}}
-            <div class="slider-info-box" style="display:none;">
-              <span class="sticker" style="background:var(--orange); color:var(--white); border-color:var(--ink); font-family:var(--font-pixel); padding:6px 14px; margin-bottom:10px; display:inline-block; box-shadow:3px 3px 0 var(--ink);">
-                {{titulo_superior}}
-              </span>
-              <h1 class="huge" style="color:var(--white); text-shadow:2px 2px 0 var(--ink); font-size:clamp(26px, 5vw, 56px); max-width:800px; line-height:1.1;">
-                {{descripcion}}
-              </h1>
+            <div class="industrial-slide">
+              <img src="{{img}}" alt="Banner Industrial">
             </div>
             {{/sliders}}
           </div>
-        </div>
 
-        <!-- Flechas laterales de navegación -->
-        <button class="ind-arrow ind-prev" id="indPrev" aria-label="Anterior" style="position:absolute; left:12px; z-index:20; background:rgba(11,11,11,0.75); border:2px solid var(--lime); color:var(--lime); width:42px; height:42px; display:grid; place-items:center; cursor:pointer; transition:0.2s;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="width:20px;height:20px;"><path d="M15 5l-7 7 7 7"/></svg>
-        </button>
-        <button class="ind-arrow ind-next" id="indNext" aria-label="Siguiente" style="position:absolute; right:12px; z-index:20; background:rgba(11,11,11,0.75); border:2px solid var(--lime); color:var(--lime); width:42px; height:42px; display:grid; place-items:center; cursor:pointer; transition:0.2s;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="width:20px;height:20px;"><path d="M9 5l7 7-7 7"/></svg>
-        </button>
+          <!-- Capa de contenido superpuesto -->
+          <div class="ind-overlay">
+            <div class="industrial-content">
+              {{#sliders}}
+              <div class="slider-info-box" style="display:none;">
+                <span class="sticker ind-sticker">
+                  {{titulo_superior}}
+                </span>
+                <h1 class="huge">
+                  {{descripcion}}
+                </h1>
+              </div>
+              {{/sliders}}
+            </div>
+          </div>
 
-        <!-- Botón flotante "SOLICITE ASESORAMIENTO" con el diseño oficial -->
-        <div style="position:absolute; right:var(--edge); bottom:20px; z-index:25;">
-          <a href="{{url_whatsapp}}" target="_blank" rel="noopener noreferrer" class="btn fill" style="background:var(--lime); color:var(--ink); border:3px solid var(--ink); box-shadow:4px 4px 0 var(--orange); font-family:var(--font-pixel); letter-spacing:1px; padding:10px 20px; font-size:clamp(14px, 1.4vw, 18px);">
-            SOLICITE ASESORAMIENTO &rarr;
-          </a>
+          <!-- Flechas laterales de navegación -->
+          <button class="ind-arrow ind-prev" id="indPrev" aria-label="Anterior">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M15 5l-7 7 7 7"/></svg>
+          </button>
+          <button class="ind-arrow ind-next" id="indNext" aria-label="Siguiente">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M9 5l7 7-7 7"/></svg>
+          </button>
+
+          <!-- Botón "SOLICITAR PÁGINA WEB": centro inferior, fijo en todos los sliders -->
+          <div class="ind-cta">
+            <a href="{{url_whatsapp}}" target="_blank" rel="noopener noreferrer" class="btn fill">
+              SOLICITAR PÁGINA WEB &rarr;
+            </a>
+          </div>
+
         </div>
 
       </div>
 
-      <!-- Marquesina intermedia con espacio controlado -->
+      <!-- Marquesina justo debajo del slider -->
       <div class="marquee bleed" data-reveal style="margin-bottom:50px; border-bottom:none; background:var(--lime); color:var(--ink); position:relative; z-index:3;">
         <div class="track">
           {{#marquesina_words}}
@@ -58,7 +174,7 @@
       <!-- Espaciador físico para garantizar que no se solapan -->
       <div style="height: 40px; width: 100%;"></div>
 
-      <!-- Sección de Promociones / Reparaciones e Ingeniería -->
+      <!-- Sección de Promociones / Nuevos modelos -->
       {{> promociones}}
 
     </div>

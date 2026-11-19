@@ -21,8 +21,8 @@ import { initGallery, fillMarquees } from './03_cards.js';
   const rootCS = getComputedStyle(document.documentElement);
   const BGVAR = { "s-ink": "--ink", "s-orange": "--orange", "s-lime": "--lime", "s-bone": "--bone" };
 
-  // Definir las slides permitidas según el menú nav_pop (Presentación: 0, Nosotros: 1)
-  const allowedSlides = [0, 1];
+  // Slides permitidas según el menú nav_pop (Presentación: 0, Nosotros: 1, Sistemas: 10)
+  const allowedSlides = [0, 1, 10];
 
   function slideColor(slide) {
     if (!slide || !slide.classList) return "#0B0B0B";

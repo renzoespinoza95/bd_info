@@ -1,5 +1,5 @@
 <!-- Modal de diseños a pantalla completa (se usa desde el inicio y desde "Mis trabajos") -->
-<div id="imageModal" data-noswipe data-wa-url="{{url_whatsapp}}" aria-hidden="true" style="display:none; position:fixed; inset:0; z-index:99999; background:#0B0B0B;">
+<div id="imageModal" role="dialog" aria-modal="true" data-noswipe data-wa-url="{{url_whatsapp}}" aria-hidden="true" style="display:none; position:fixed; inset:0; z-index:99999; background:#0B0B0B;">
 
   <div id="designScroller" class="design-scroller scrollable" tabindex="-1">
     <div style="max-width:900px; margin:0 auto;">
@@ -29,34 +29,36 @@
     display: none !important;
   }
 
-  /* Cuadrícula de diseños: 2 columnas, una fila debajo de otra */
+  /* Cuadrícula de miniaturas: 2 columnas, cada miniatura con su alto completo */
   .design-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 16px;
+    display: block;
+    column-count: 2;
+    column-gap: 16px;
     margin-top: 14px;
   }
   .design-card {
     position: relative;
-    margin: 0;
+    display: block;
+    margin: 0 0 16px;
     overflow: hidden;
     border: 3px solid var(--ink);
     background: var(--ink-2);
     box-shadow: 4px 4px 0 var(--ink);
-    aspect-ratio: 4/3;
     cursor: pointer;
-    transition: transform .18s var(--snap), box-shadow .18s var(--pop);
+    break-inside: avoid;
+    -webkit-column-break-inside: avoid;
+    page-break-inside: avoid;
+    transition: box-shadow .18s var(--pop);
   }
+  /* Sin desplazamiento en hover: así el área de clic no se mueve bajo el cursor */
   .design-card:hover {
-    transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0 var(--ink);
+    box-shadow: 7px 7px 0 var(--ink);
   }
   .design-card img {
     display: block;
     width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: top center;
+    height: auto;          /* alto completo de la imagen, en miniatura */
+    max-width: 100%;
   }
   .design-card .design-cap {
     position: absolute;
@@ -80,7 +82,7 @@
     box-shadow: 4px 4px 0 var(--orange);
   }
   .s-ink .design-card:hover {
-    box-shadow: 6px 6px 0 var(--orange);
+    box-shadow: 7px 7px 0 var(--orange);
   }
 
   /* Área con scroll vertical dentro del modal */
@@ -114,7 +116,8 @@
   }
 
   @media (max-width: 640px) {
-    .design-grid { gap: 10px; }
+    .design-grid { column-gap: 10px; }
+    .design-card { margin-bottom: 10px; }
     .design-scroller { padding: 0 0 96px; }
     .design-arrow { width: 38px; height: 38px; opacity: .92; }
   }
