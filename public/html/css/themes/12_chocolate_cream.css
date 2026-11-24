@@ -1,0 +1,7 @@
+/* 12 CHOCOLATE CREAM - PREMIUM */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Montserrat:wght@400;500;700&family=Allura&display=swap');
+:root{--bg:#F6EBDD;--main:#70452F;--second:#C58B62;--accent:#D7B66D;--text:#33251F;
+--f-title:'Cormorant Garamond',serif;--f-body:'Montserrat',sans-serif;--f-deco:'Allura',cursive;
+--title-tt:none;--title-ls:-.01em;--title-w:700;--title-lh:1;--t-scale:1.1}
+.hand{font-size:clamp(2rem,4vw,3rem)}
+.band-pink{color:#fff}.band-pink .btn-gc.dark{background:var(--accent);color:var(--text);border-color:var(--accent)}

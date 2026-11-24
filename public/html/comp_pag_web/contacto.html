@@ -1,0 +1,28 @@
+<section id="contacto" class="band band-sky">
+  <div class="container">
+    <div class="row g-5">
+      <div class="col-lg-5">
+        <span class="deco hand">escríbenos,</span>
+        <h2 class="display sec-title">{{contacto_titulo}}*</h2>
+        <ul class="contact-list">
+          <li><i class="bi bi-geo-alt"></i><div><small>{{direccion.titulo}}</small>{{direccion.contenido}}</div></li>
+          <li><i class="bi bi-whatsapp"></i><div><small>{{telefono.titulo}}</small><a href="https://wa.me/{{wa}}" target="_blank" rel="noopener">{{telefono.contenido}}</a></div></li>
+          <li><i class="bi bi-clock"></i><div><small>{{horario.titulo}}</small>{{horario.contenido}}</div></li>
+          <li><i class="bi bi-envelope"></i><div><small>{{email.titulo}}</small><a href="mailto:{{email.contenido}}">{{email.contenido}}</a></div></li>
+        </ul>
+        {{#mapa_url}}<a class="btn-gc dark" href="{{mapa_url}}" target="_blank" rel="noopener"><i class="bi bi-map"></i> Ver mapa</a>{{/mapa_url}}
+      </div>
+      <div class="col-lg-7">
+        <h3 class="display mb-3">Preguntas frecuentes</h3>
+        <div class="accordion gc-acc" id="accFaq">
+          {{#faq}}
+          <div class="accordion-item">
+            <h4 class="accordion-header"><button class="accordion-button {{colapsado}}" type="button" data-bs-toggle="collapse" data-bs-target="#faq{{id}}">{{titulo}}</button></h4>
+            <div id="faq{{id}}" class="accordion-collapse collapse {{abierto}}" data-bs-parent="#accFaq"><div class="accordion-body">{{contenido}}</div></div>
+          </div>
+          {{/faq}}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

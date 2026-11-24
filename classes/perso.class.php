@@ -1,47 +1,7 @@
 <?php
 class perso {
 
-  protected static $boot;
-  protected static $publico;
-  public static $varhost;
-
-  public static function config($varhost) {
-      self::$boot = $varhost . "/public/bootstrap";  
-      self::$varhost = $varhost;
-  }
-  
-  public static function start() {
-  
-  com("Bootstrap");
-  echo "<link href='" . self::$boot . "/assets/css/bootstrap2.css' rel='stylesheet'>";
-  n();
-  
-  echo "<link href='" . self::$boot . "/assets/css/bootstrap-responsive.css' rel='stylesheet'>";
-  n();    
-    
-  }
-  
-  
-  public static function favicon()
-  {
-    com("Favicon");     
-    echo "<link rel='shortcut icon' href='" . self::$varhost . "/public/ico/favicon.png'>";
-    n();
-  }
-
-  public static function jquery2() 
-  {
-   com("boot jquery 2.0.0");
-   echo "<script src='" . self::$boot . "/assets/js/jquery2.0.0.js'></script>" . "\n";  
-  }
-
-  public static function jquery_ui() 
-  {
-   com("boot jquery UI");
-   echo "<script src='" . self::$boot . "/assets/js/jquery-ui.min.js'></script>" . "\n";  
-  }
-
-  public static function _es_apache(): bool {
+    public static function _es_apache(): bool {
         $sv = strtolower($_SERVER['SERVER_SOFTWARE'] ?? '');
         if ($sv) {
             // Coincide con Apache/2.x, Apache, httpd, etc.
@@ -49,224 +9,258 @@ class perso {
         }
         // Fallbacks por si SERVER_SOFTWARE no está
         return function_exists('apache_get_version') || getenv('APACHE_RUN_USER');
+    }    
+
+    public static function regentis_rss($neg_id_param) {
+        try {
+            $neg_id = (int)$neg_id_param;
+
+            if ($neg_id <= 0) {
+                return ['status' => 'error', 'msg' => 'neg_id inválido'];
+            }
+
+            // Consultar información básica del negocio
+            $negocio = DB::queryFirstRow("SELECT neg_id, nombre, slug, img_logo, celular_informes FROM reg_neg WHERE neg_id = %i", $neg_id);
+
+            // ---------------- WEB ----------------
+            $categoriasWeb = DB::query("SELECT * FROM reg_cat_pag_web WHERE neg_id = %i AND (is_visible = 1 OR is_visible IS NULL) ORDER BY cat_pag_web_id DESC", $neg_id);
+            $arbolWeb = [];
+
+            foreach ($categoriasWeb as $cat) {
+                $cat = self::arbol_cast($cat, ['cat_pag_web_id', 'is_visible', 'orden', 'neg_id']);
+
+                $subcats = DB::query("SELECT * FROM reg_subcat_pag_web WHERE cat_pag_web_id = %i AND (is_visible = 1 OR is_visible IS NULL) ORDER BY orden ASC, subcat_pag_web_id ASC", $cat['cat_pag_web_id']);
+                $subcatsList = [];
+
+                foreach ($subcats as $sub) {
+                    $sub = self::arbol_cast($sub, ['subcat_pag_web_id', 'cat_pag_web_id', 'is_visible', 'orden']);
+
+                    $items = DB::query("SELECT * FROM reg_item_pag_web WHERE subcat_pag_web_id = %i AND (is_visible = 1 OR is_visible IS NULL) ORDER BY orden ASC, item_pag_web_id ASC", $sub['subcat_pag_web_id']);
+                    $itemsList = [];
+
+                    foreach ($items as $item) {
+                        $item = self::arbol_cast($item, ['item_pag_web_id', 'subcat_pag_web_id', 'stock', 'orden', 'is_visible'], ['precio']);
+
+                        $imagenes = DB::query("SELECT * FROM reg_pag_item_img WHERE item_pag_web_id = %i ORDER BY orden ASC, pag_item_img_id ASC", $item['item_pag_web_id']);
+                        foreach ($imagenes as $k => $im) {
+                            $imagenes[$k] = self::arbol_cast($im, ['pag_item_img_id', 'item_pag_web_id', 'is_visible', 'orden']);
+                        }
+
+                        $videos = DB::query("SELECT * FROM reg_pag_item_vid WHERE item_pag_web_id = %i ORDER BY orden ASC, pag_item_vid_id ASC", $item['item_pag_web_id']);
+                        foreach ($videos as $k => $vi) {
+                            $videos[$k] = self::arbol_cast($vi, ['pag_item_vid_id', 'item_pag_web_id', 'is_visible', 'orden']);
+                        }
+
+                        $item['imagenes'] = $imagenes;
+                        $item['videos'] = $videos;
+                        $itemsList[] = $item;
+                    }
+
+                    $sub['items'] = $itemsList;
+                    $subcatsList[] = $sub;
+                }
+
+                $cat['subcategorias'] = $subcatsList;
+                $arbolWeb[] = $cat;
+            }
+
+            // ---------------- POS ----------------
+            $categoriasPos = DB::query("SELECT * FROM pos_category WHERE neg_id = %i AND borrado_el IS NULL ORDER BY category_id DESC", $neg_id);
+            $arbolPos = [];
+
+            foreach ($categoriasPos as $pcat) {
+                $pcat = self::arbol_cast($pcat, ['category_id', 'priority', 'neg_id', 'categoria_global_id', 'is_activo']);
+
+                // Subcategorías POS de la categoría
+                $subsPos = DB::query("SELECT * FROM pos_subcategoria WHERE category_id = %i AND borrado_el IS NULL ORDER BY orden ASC, subcategoria_id ASC", $pcat['category_id']);
+                $subsPosList = [];
+                $mapaClaveSub = []; // subcategoria_id => clave_txt
+                foreach ($subsPos as $sp) {
+                    $sp = self::arbol_cast($sp, ['subcategoria_id', 'category_id', 'is_activo', 'orden']);
+                    $mapaClaveSub[$sp['subcategoria_id']] = $sp['clave_txt'] ?? null;
+                    $subsPosList[] = $sp;
+                }
+
+                // Productos de la categoría (a través de la tabla puente)
+                $relaciones = DB::query("SELECT * FROM pos_product_category WHERE category_id = %i AND is_visible = 1", $pcat['category_id']);
+                $productosList = [];
+
+                foreach ($relaciones as $rel) {
+                    $prod = DB::queryFirstRow("SELECT * FROM pos_product WHERE product_id = %i AND neg_id = %i AND borrado_el IS NULL", $rel['product_id'], $neg_id);
+                    if (!$prod) {
+                        continue;
+                    }
+
+                    $prod = self::arbol_cast($prod, ['product_id', 'neg_id', 'subcategoria_id', 'is_visible', 'cantidad_comprada'], ['price', 'compra_total']);
+
+                    // Clave de la subcategoría del producto (sobrevive a la limpieza de *_id del JSON)
+                    $prod['subcategoria_clave_txt'] = ($prod['subcategoria_id'] !== null && isset($mapaClaveSub[$prod['subcategoria_id']]))
+                        ? $mapaClaveSub[$prod['subcategoria_id']]
+                        : null;
+
+                    if (isset($prod['variantes_json']) && $prod['variantes_json'] !== '') {
+                        $dec = json_decode($prod['variantes_json'], true);
+                        if (json_last_error() === JSON_ERROR_NONE) {
+                            $prod['variantes_json'] = $dec;
+                        }
+                    }
+
+                    $pimagenes = DB::query("SELECT * FROM pos_product_image WHERE product_id = %i AND borrado_el IS NULL ORDER BY orden ASC, product_image_id ASC", $prod['product_id']);
+                    foreach ($pimagenes as $k => $pim) {
+                        $pimagenes[$k] = self::arbol_cast($pim, ['product_image_id', 'product_id', 'orden', 'is_visible']);
+                    }
+
+                    $prod['imagenes'] = $pimagenes;
+                    $productosList[] = $prod;
+                }
+
+                $pcat['subcategorias'] = $subsPosList;
+                $pcat['productos'] = $productosList;
+                $arbolPos[] = $pcat;
+            }
+
+            // ---------------- SLIDERS ----------------
+            $sliders = DB::query("SELECT * FROM reg_slider WHERE neg_id = %i ORDER BY slider_id DESC", $neg_id);
+            foreach ($sliders as $k => $sl) {
+                $sliders[$k] = self::arbol_cast($sl, ['slider_id', 'orden', 'is_visible', 'neg_id']);
+            }
+
+            return [
+                'status' => 'ok',
+                'negocio' => $negocio,
+                'web' => $arbolWeb,
+                'pos' => $arbolPos,
+                'sliders' => $sliders
+            ];
+
+        } catch (Exception $e) {
+            return ['status' => 'error', 'msg' => $e->getMessage()];
+        }
+    }   
+
+    public static function vari($nombre_variable) {
+        $query = <<<EOF
+        SELECT * FROM reg_vari WHERE nombre = '$nombre_variable'
+        EOF;
+
+        $res = DB::queryFirstRow($query);
+        $vari = $res['valor'];    
+
+        if($vari == "") {
+            echo "NO EXISTE: $nombre_variable";
+            exit;
+        }
+        return $vari;
     }
 
-	public static function encrypt($string, $key) {
-	    $method = 'AES-256-CBC';
-	    $key = hash('sha256', $key, true); // 256-bit key
-	    $iv = openssl_random_pseudo_bytes(16); // 16 bytes IV para AES-256-CBC
+    /**
+     * Obtiene el valor actual de las visitas para el negocio actual.
+     */
+    public static function obtener_visitas() {
+        global $neg_id; // Aseguramos el acceso a la variable global en memoria
 
-	    $encrypted = openssl_encrypt($string, $method, $key, OPENSSL_RAW_DATA, $iv);
+        $item_visitas = DB::queryFirstRow("
+            SELECT i.contenido 
+            FROM reg_item_pag_web i
+            INNER JOIN reg_subcat_pag_web s ON i.subcat_pag_web_id = s.subcat_pag_web_id
+            INNER JOIN reg_cat_pag_web c ON s.cat_pag_web_id = c.cat_pag_web_id
+            WHERE i.clave_txt = %s AND c.neg_id = %i
+            LIMIT 1
+        ", 'txt_visitas', $neg_id);
 
-	    return base64_encode($iv . $encrypted);
-	}
-
-	public static function decrypt($encrypted, $key) {
-
-	    if (!is_string($encrypted) || trim($encrypted) === '') {
-	        return null;
-	    }
-
-	    $method = 'AES-256-CBC';
-	    $key = hash('sha256', $key, true);
-
-	    $data = base64_decode($encrypted, true);
-
-	    if ($data === false || strlen($data) < 17) {
-	        return null;
-	    }
-
-	    $iv = substr($data, 0, 16);
-	    $ciphertext = substr($data, 16);
-
-	    return openssl_decrypt($ciphertext, $method, $key, OPENSSL_RAW_DATA, $iv);
-	}    
-
-	public static function vuejs2() {
-	    com("VUEJS2");
-	    js(self::$boot . "/vuejs2/vue.min.js");
-	    js(self::$boot . "/vuejs2/axios.min.js");
-	    n();      
-	}
-
-  public static function apprise()
-  {
-    com("Apprise");
-    css(self::$boot . "/apprise/apprise.min.css");
-    js(self::$boot . "/apprise/apprise.js");
-  }
-
-public static function global_env($apphost, $varhost, $adicional = null) {
-    include DEFINITION;
-      com("global_env");
-      $bunny_storage_url = BUNNY_CDN_BASE;
-$aplicar = <<<EOF
-<script type="text/javascript">
-   let apphost = '$apphost';  
-   let varhost = '$varhost';
-   let url_flask = '$url_flask';
-   let cdn_base_url = '$bunny_storage_url';
-   $adicional
-   let dt_language = {
-    search: "Buscar:",
-    lengthMenu: "Mostrar _MENU_ registros",
-    info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
-    infoEmpty: "Mostrando 0 a 0 de 0 registros",
-    infoFiltered: "(filtrado de _MAX_ registros)",
-    loadingRecords: "Cargando...",
-    zeroRecords: "No se encontraron resultados",
-    emptyTable: "No hay datos disponibles",
-    paginate: {
-      first: "Primero",
-      last: "Último",
-      next: "Siguiente",
-      previous: "Anterior"
-    }
-  };
-
-(function() {
-
-  const token = localStorage.getItem('jwt');
-
-  if (!token) {
-    // Si no hay token → redirige al login
-    console.log("Acceso No Autorizado");
-    return;
-  }
-
-  // Configura axios globalmente
-  axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
-
-})(); 
-</script>
-EOF;
-    echo $aplicar;
-    n(); 
-}   
-
-
-public static function ok() {
-
-    $res = array(
-    'res'=> 'ok'
-    );
-
-    return json_encode($res);
-
-}
-
-public static function error() {
-
-    $res = array(
-    'res'=> 'error'
-    );
-
-    return json_encode($res);
-
-}
-
-public static function preparar_para_encriptar($string) {
-    return $string."*";
-}
-
-  public static function vue_select() {
-      com("vue-select");
-      js(self::$boot . "/vue-select/vue-select-2-6-4.min.js");
-      n();      
-  }  
-
-  public static function font_awesome()
-  {
-    com("Font Awesome");
-    css(self::$boot . "/font-awesome/css/font-awesome.css");
-  }
-
-  public static function js()
-  {
-    com("Bootstrap JS");
-    js(self::$boot . "/assets/js/bootstrap2.3.2.js");
-  }
-
-  public static function block_ui()
-  {
-    com("Block UI");
-    js(self::$boot . "/block_ui/jquery.blockUI.js");
-    n();
-  }
-
-  public static function perso($version = null)
-  {
-    com("PERSO");
-    css(self::$boot . "/perso/perso.css?version=" . $version);
-    js(self::$boot . "/perso/perso.js?version=" . $version);
-  }
-
-  public static function datatables()
-  {
-    com("datatables");
-    js(self::$boot . "/datatables/jquery.dataTables.js");
-    css(self::$boot . "/datatables/jquery.dataTables.css");
-    n();      
-  }     
-
-  public static function summernote() {
-      com("summernote");
-      js(self::$boot . "/summernote/summernote-lite.js");
-      css(self::$boot . "/summernote/summernote-lite.css");
-      n();      
-  }  
-
-public static function guardar_palabra_latina($texto) {
-    if (is_null($texto)) {
-        return null;
+        return isset($item_visitas['contenido']) ? (int) $item_visitas['contenido'] : 0;
     }
 
-    $texto = trim($texto);
-    return iconv("UTF-8", "CP1252", $texto);
-}
+    /**
+     * Incrementa en 1 el contador de visitas filtrando por el negocio actual.
+     * Si no existe el registro de visitas para este negocio, lo crea.
+     */
+    public static function visita() {
+        global $neg_id; // Aseguramos el acceso a la variable global en memoria
 
-public static function mostrar_palabra_latina($texto) {
-    if (is_null($texto) || $texto === '') {
-        return '';
+        // 1. Buscamos el item de visitas vinculado al negocio a través de sus categorías
+        $item = DB::queryFirstRow("
+            SELECT i.item_pag_web_id, i.contenido 
+            FROM reg_item_pag_web i
+            INNER JOIN reg_subcat_pag_web s ON i.subcat_pag_web_id = s.subcat_pag_web_id
+            INNER JOIN reg_cat_pag_web c ON s.cat_pag_web_id = c.cat_pag_web_id
+            WHERE i.clave_txt = %s AND c.neg_id = %i
+            LIMIT 1
+        ", 'txt_visitas', $neg_id);
+
+        if ($item) {
+            // Si ya existe, incrementamos el valor actual
+            $nuevo_total = (int) $item['contenido'] + 1;
+            
+            DB::update('reg_item_pag_web', [
+                'contenido' => (string) $nuevo_total
+            ], 'item_pag_web_id = %i', $item['item_pag_web_id']);
+            
+            return $nuevo_total;
+        } else {
+            // 2. Si no existe, necesitamos asociarlo a una subcategoría válida de ese negocio.
+            // Buscamos la primera subcategoría perteneciente a una categoría de este $neg_id.
+            $subcat = DB::queryFirstRow("
+                SELECT s.subcat_pag_web_id 
+                FROM reg_subcat_pag_web s
+                INNER JOIN reg_cat_pag_web c ON s.cat_pag_web_id = c.cat_pag_web_id
+                WHERE c.neg_id = %i
+                LIMIT 1
+            ", $neg_id);
+
+            if ($subcat) {
+                // Creamos el registro de visitas vinculado a la subcategoría del negocio
+                DB::insert('reg_item_pag_web', [
+                    'subcat_pag_web_id' => $subcat['subcat_pag_web_id'],
+                    'clave_txt' => 'txt_visitas',
+                    'titulo' => 'Contador de Visitas',
+                    'contenido' => '1'
+                ]);
+                
+                return 1;
+            }
+            
+            // Retorna 0 si el negocio aún no tiene categorías ni subcategorías creadas
+            return 0; 
+        }
     }
-    return iconv("CP1252", "UTF-8", $texto);
-}
 
-public static function visita($nombre = 'visitas') {
+    // =========================================================================
+    // MÉTODOS AUXILIARES (ARBOL Y CAMPOS)
+    // =========================================================================
 
-    // 🔥 Asegurar charset
-    DB::query("SET NAMES 'utf8mb4'");
+    // Convierte a int / float las columnas indicadas (MySQL suele devolver todo como string)
+    public static function arbol_cast($row, $ints = array(), $floats = array()) {
+        foreach ($ints as $c) {
+            if (array_key_exists($c, $row) && $row[$c] !== null && $row[$c] !== '') {
+                $row[$c] = (int)$row[$c];
+            }
+        }
+        foreach ($floats as $c) {
+            if (array_key_exists($c, $row) && $row[$c] !== null && $row[$c] !== '') {
+                $row[$c] = (float)$row[$c];
+            }
+        }
+        return $row;
+    }
 
-    // 🔥 Incrementar variable dinámica
-    DB::query("
-        UPDATE reg_vari 
-        SET valor = IFNULL(valor,0) + 1
-        WHERE nombre = %s
-    ", $nombre);
+    // Devuelve solo las columnas pedidas que existan en el JSON y no sean null
+    public static function imp_campos($j, $cols) {
+        $out = array();
+        foreach ($cols as $c) {
+            if (array_key_exists($c, $j) && $j[$c] !== null) {
+                $out[$c] = $j[$c];
+            }
+        }
+        return $out;
+    }
 
-}
+    public static function imp_vacio($v) {
+        return $v === null || $v === '';
+    }
 
-public static function vari($nombre_variable)
-{
-
-$query = <<<EOF
-SELECT * FROM reg_vari WHERE nombre = '$nombre_variable'
-EOF;
-
-$res = DB::queryFirstRow($query);
-$vari = $res['valor'];    
-
-
-if($vari == "") {;
-echo "NO EXISTE: $nombre_variable";
-exit;
-}
-return $vari;
-
-}
-  
-// +++++++++++++
-// | END PERSO |
-// +++++++++++++
+    // +++++++++++++
+    // | END PERSO |
+    // +++++++++++++
 
 }

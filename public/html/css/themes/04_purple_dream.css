@@ -1,0 +1,6 @@
+/* 04 PURPLE DREAM - CREATIVO */
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Poppins:wght@400;500;700&family=Sacramento&display=swap');
+:root{--bg:#F8F1FF;--main:#7928CA;--second:#E28AD5;--accent:#FFB86C;--text:#30213D;
+--f-title:'Syne',sans-serif;--f-body:'Poppins',sans-serif;--f-deco:'Sacramento',cursive;
+--title-tt:uppercase;--title-ls:-.02em;--title-w:800;--title-lh:.95;--t-scale:.9}
+.hand{font-size:clamp(2rem,4vw,3rem)}

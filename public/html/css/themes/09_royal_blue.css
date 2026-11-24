@@ -1,0 +1,7 @@
+/* 09 ROYAL BLUE - CORPORATIVO */
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@600;800&family=Open+Sans:wght@400;600;700&family=Lora:ital,wght@0,500;1,500&display=swap');
+:root{--bg:#F4F7FC;--main:#173B70;--second:#3977C3;--accent:#E9AD4B;--text:#202B3C;
+--f-title:'Manrope',sans-serif;--f-body:'Open Sans',sans-serif;--f-deco:'Lora',serif;
+--title-tt:none;--title-ls:-.03em;--title-w:800;--title-lh:1;--t-scale:.85}
+.hand,.hand-sm,.hs-tag{font-style:italic}
+.band-pink{background:var(--second);color:#fff}.band-pink .btn-gc.dark{background:var(--accent);color:var(--text);border-color:var(--accent)}

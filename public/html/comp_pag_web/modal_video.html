@@ -1,0 +1,26 @@
+<div class="modal fade gc-modal" id="modalVideo" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="display modal-title">Videos</h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row g-3">
+          <div class="col-lg-8">
+            <div class="ratio ratio-16x9 bg-dark"><iframe id="video-frame" src="" title="Video" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div>
+          </div>
+          <div class="col-lg-4">
+            <ul class="video-list">
+              {{#videos}}
+              <li><button type="button" class="video-item" data-embed="{{embed}}">
+                <img src="{{thumb}}" alt="" loading="lazy"><span><small>{{grupo}}</small><b>{{titulo}}</b></span>
+              </button></li>
+              {{/videos}}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

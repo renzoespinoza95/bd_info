@@ -1,0 +1,7 @@
+/* 02 LUXURY GOLD - ELEGANTE */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;800&family=Lato:wght@400;700&family=Allura&display=swap');
+:root{--bg:#F8F3E9;--main:#9B7545;--second:#D6B879;--accent:#28251F;--text:#39342D;
+--f-title:'Playfair Display',serif;--f-body:'Lato',sans-serif;--f-deco:'Allura',cursive;
+--title-tt:none;--title-ls:0;--title-w:800;--title-lh:1.05;--t-scale:.9;--on-accent:#F8F3E9}
+.band-accent{color:#F8F3E9}.band-accent .btn-gc.dark{background:var(--main);border-color:var(--main);color:#fff}
+.hand{font-size:clamp(2rem,4vw,3rem)}

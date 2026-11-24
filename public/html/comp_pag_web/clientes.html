@@ -1,0 +1,21 @@
+<section id="clientes" class="band">
+  <div class="container">
+    <h2 class="display sec-title text-center mb-5"><span class="ring">{{clientes_titulo}}</span></h2>
+    <div class="row g-4 row-cols-1 row-cols-md-3">
+      {{#testimonios}}
+      <div class="col">
+        <figure class="testi">
+          <span class="tape"></span>
+          <blockquote>“{{contenido}}”</blockquote>
+          <figcaption><img src="{{imgx}}" alt="" loading="lazy"><b>{{titulo}}</b></figcaption>
+        </figure>
+      </div>
+      {{/testimonios}}
+    </div>
+    <div class="aliados mt-5">
+      {{#aliados}}
+      <div class="aliado"><img src="{{imgx}}" alt="{{titulo}}" loading="lazy"><b>{{titulo}}</b></div>
+      {{/aliados}}
+    </div>
+  </div>
+</section>

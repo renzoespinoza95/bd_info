@@ -1,0 +1,6 @@
+/* 10 EARTH TERRACOTTA - ARTESANAL */
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700;9..144,900&family=Work+Sans:wght@400;500;700&family=Caveat:wght@500;700&display=swap');
+:root{--bg:#F7EEE2;--main:#A64B32;--second:#C98B63;--accent:#6F7650;--text:#392C25;
+--f-title:'Fraunces',serif;--f-body:'Work Sans',sans-serif;--f-deco:'Caveat',cursive;
+--title-tt:none;--title-ls:-.02em;--title-w:900;--title-lh:1;--t-scale:.9}
+.band-accent{color:#fff}.band-accent .btn-gc.dark{background:var(--bg);color:var(--text);border-color:var(--bg)}

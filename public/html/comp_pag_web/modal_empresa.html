@@ -1,0 +1,28 @@
+<div class="modal fade gc-modal" id="modalEmpresa" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="display modal-title">Nosotros</h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row g-4 mb-4">
+          <div class="col-md-6">
+            <img class="mv-img" src="{{mision.imgx}}" alt="{{mision.titulo}}" loading="lazy">
+            <h3 class="mt-3">{{mision.titulo}}</h3><p>{{mision.contenido}}</p>
+          </div>
+          <div class="col-md-6">
+            <img class="mv-img" src="{{vision.imgx}}" alt="{{vision.titulo}}" loading="lazy">
+            <h3 class="mt-3">{{vision.titulo}}</h3><p>{{vision.contenido}}</p>
+          </div>
+        </div>
+        <h3 class="display mb-3">Valores</h3>
+        <div class="row g-3 row-cols-1 row-cols-sm-2">
+          {{#valores}}
+          <div class="col"><div class="valor"><i class="bi bi-flower1"></i><div><b>{{titulo}}</b><p class="m-0">{{contenido}}</p></div></div></div>
+          {{/valores}}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,34 @@
+<div class="marquee" aria-label="Avisos">
+  <div class="marquee-track">
+    {{#marquesina}}<span>✱ {{titulo}}</span>{{/marquesina}}
+    {{#marquesina}}<span aria-hidden="true">✱ {{titulo}}</span>{{/marquesina}}
+  </div>
+</div>
+
+<section id="propuesta" class="band band-pink">
+  <div class="container">
+    <div class="row g-5 align-items-center">
+      <div class="col-lg-5">
+        <span class="deco hand">{{nombre_negocio}}* presenta</span>
+        <h2 class="display sec-title">{{hero_titulo}}</h2>
+        <p class="lead mt-3">{{hero_texto}}</p>
+        <a href="#productos" class="btn-gc dark mt-2">Explorar <i class="bi bi-arrow-right"></i></a>
+      </div>
+      <div class="col-lg-7">
+        <ol class="prop-list">
+          {{#propuesta}}
+          <li class="prop-item">
+            <span class="prop-num">{{num}}</span>
+            <img src="{{imgx}}" alt="{{titulo}}" loading="lazy">
+            <div>
+              <small class="deco hand-sm">{{subtitulo}}</small>
+              <h3>{{titulo}}</h3>
+              <p>{{contenido}}</p>
+            </div>
+          </li>
+          {{/propuesta}}
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,6 @@
+/* 07 PINK BLOOM - FEMENINO */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@600;800&family=Nunito:wght@400;600;800&family=Allura&display=swap');
+:root{--bg:#FFF3F5;--main:#D63384;--second:#F7A8C4;--accent:#EFA45B;--text:#48283A;
+--f-title:'Outfit',sans-serif;--f-body:'Nunito',sans-serif;--f-deco:'Allura',cursive;
+--title-tt:uppercase;--title-ls:-.01em;--title-w:800;--title-lh:.95;--t-scale:.95}
+.hand{font-size:clamp(2rem,4vw,3rem)}

@@ -52,8 +52,6 @@ if (perso::_es_apache()) {
     });
 }
 
-perso::config($varhost);
-
 // Meekro
 DB::$user = $username;
 DB::$password = $password;
@@ -61,7 +59,7 @@ DB::$dbName = $dbname;
 DB::$host = $host;
 DB::query("SET NAMES utf8mb4");
 
-require_once VARPATH."/app/gatti.control.php";
+require_once VARPATH."/public/html/control.php";
 
 // var_dump($administrador_actual);
 // exit;

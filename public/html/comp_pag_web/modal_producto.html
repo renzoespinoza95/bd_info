@@ -1,0 +1,26 @@
+<div class="modal fade gc-modal" id="modalProducto" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <button type="button" class="btn-close m-3 ms-auto" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      <div class="modal-body pt-0">
+        <div class="row g-4">
+          <div class="col-md-6"><img id="pm-img" class="w-100 pm-img" src="" alt=""></div>
+          <div class="col-md-6 d-flex flex-column gap-2">
+            <small id="pm-marca" class="marca"></small>
+            <h2 id="pm-name" class="display"></h2>
+            <p id="pm-desc"></p>
+            <div id="pm-var" class="d-none">
+              <label id="pm-var-label" class="form-label fw-bold small text-uppercase"></label>
+              <select id="pm-var-sel" class="form-select"></select>
+            </div>
+            <div class="d-flex align-items-center gap-3 mt-2">
+              <b id="pm-price" class="price fs-3"></b>
+              <input id="pm-qty" type="number" min="1" value="1" class="form-control" style="width:80px">
+            </div>
+            <button id="pm-add" type="button" class="btn-gc mt-auto"><i class="bi bi-bag-plus"></i> Agregar al carrito</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

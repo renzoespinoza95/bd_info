@@ -1,0 +1,35 @@
+<section id="servicios" class="band band-sky">
+  <div class="container">
+    <div class="text-center mb-5">
+      <span class="deco hand">{{nombre_negocio}}*</span>
+      <h2 class="display sec-title">{{servicios_titulo}}</h2>
+      <p class="lead mx-auto" style="max-width:680px">{{servicios_texto}}</p>
+    </div>
+    <div class="row g-4 row-cols-1 row-cols-md-2 row-cols-xl-4">
+      {{#servicios}}
+      <div class="col">
+        <article class="serv-card">
+          <span class="tape"></span>
+          <img src="{{imgx}}" alt="{{titulo}}" loading="lazy">
+          <div class="p-3"><h3>{{titulo}}</h3><p class="m-0">{{contenido}}</p></div>
+        </article>
+      </div>
+      {{/servicios}}
+    </div>
+
+    <h3 class="display text-center mt-5 mb-4">Así trabajamos</h3>
+    <div class="row g-3 row-cols-1 row-cols-md-2 row-cols-lg-4">
+      {{#proceso}}
+      <div class="col"><div class="paso"><b>{{titulo}}</b><p class="m-0">{{contenido}}</p></div></div>
+      {{/proceso}}
+    </div>
+
+    {{#hay_videos}}
+    <div class="text-center mt-5">
+      <button type="button" class="btn-gc dark" data-bs-toggle="modal" data-bs-target="#modalVideo">
+        <i class="bi bi-play-circle"></i> Ver videos
+      </button>
+    </div>
+    {{/hay_videos}}
+  </div>
+</section>

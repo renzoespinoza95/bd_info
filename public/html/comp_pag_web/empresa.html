@@ -1,0 +1,23 @@
+<section id="empresa" class="band band-accent">
+  <div class="container">
+    <div class="row g-5 align-items-center">
+      <div class="col-lg-6">
+        <span class="deco hand">{{hist.subtitulo}}</span>
+        <h2 class="display sec-title">{{hist.titulo}}</h2>
+        <p class="lead">{{hist.contenido}}</p>
+        <button type="button" class="btn-gc dark" data-bs-toggle="modal" data-bs-target="#modalEmpresa">
+          Misión, visión y valores <i class="bi bi-arrow-right"></i>
+        </button>
+        <ul class="hitos mt-4">
+          {{#hitos}}<li><b>{{anio}}</b> <span>{{texto}}</span></li>{{/hitos}}
+        </ul>
+      </div>
+      <div class="col-lg-6">
+        <div class="photo-stack">
+          <figure class="photo p1"><span class="tape"></span><img src="{{hist_img1}}" alt="{{hist.titulo}}" loading="lazy"></figure>
+          <figure class="photo p2"><span class="tape"></span><img src="{{hist_img2}}" alt="{{hist.titulo}}" loading="lazy"></figure>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

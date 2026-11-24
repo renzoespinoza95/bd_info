@@ -1,0 +1,7 @@
+/* 11 NEON ENERGY - JUVENIL */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Plus+Jakarta+Sans:wght@400;600;800&family=Permanent+Marker&display=swap');
+:root{--bg:#F7F7FF;--main:#5638E5;--second:#FF4D9D;--accent:#C5F467;--text:#202039;
+--f-title:'Space Grotesk',sans-serif;--f-body:'Plus Jakarta Sans',sans-serif;--f-deco:'Permanent Marker',cursive;
+--title-tt:uppercase;--title-ls:-.04em;--title-w:700;--title-lh:.9;--t-scale:.95}
+.hand{font-size:clamp(1.3rem,3vw,2rem)}.hs-tag{font-size:clamp(1rem,2vw,1.4rem)}
+.band-pink{color:#fff}.band-pink .btn-gc.dark{background:var(--accent);color:var(--text);border-color:var(--accent)}

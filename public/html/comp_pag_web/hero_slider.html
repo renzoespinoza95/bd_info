@@ -1,0 +1,17 @@
+<section id="inicio" class="hero-slider" data-interval="4000" aria-roledescription="carrusel">
+  {{#sliders}}
+  <article class="hs-slide{{#primero}} is-active{{/primero}}">
+    <img src="{{img}}" alt="{{titulo_superior}}" {{^primero}}loading="lazy"{{/primero}}>
+    <div class="hs-caption">
+      <span class="deco hs-tag">{{descripcion}}</span>
+      <h1 class="display">{{titulo_superior}}</h1>
+      <a href="#productos" class="btn-gc">Ver catálogo <i class="bi bi-arrow-right"></i></a>
+    </div>
+  </article>
+  {{/sliders}}
+  <button class="hs-btn prev" type="button" aria-label="Anterior"><i class="bi bi-chevron-left"></i></button>
+  <button class="hs-btn next" type="button" aria-label="Siguiente"><i class="bi bi-chevron-right"></i></button>
+  <div class="hs-dots">
+    {{#sliders}}<button type="button" class="hs-dot{{#primero}} on{{/primero}}" data-n="{{n}}" aria-label="Ir a {{n}}"></button>{{/sliders}}
+  </div>
+</section>

@@ -1,0 +1,16 @@
+<footer class="gc-footer">
+  <div class="container d-flex flex-wrap justify-content-between align-items-center gap-3">
+    <div>
+      <b class="display">{{nombre_negocio}}*</b>
+      <div class="small">{{{creditos}}} · {{dueno}} · <i class="bi bi-eye"></i> {{mis_visitas}}</div>
+    </div>
+    <div class="d-flex align-items-center gap-3">
+      <select id="tema-select" class="form-select form-select-sm" aria-label="Tema" style="width:auto">
+        {{#temas}}<option value="{{num}}" {{sel}}>{{nombre}}</option>{{/temas}}
+      </select>
+      {{#tiktok}}<a href="{{tiktok}}" target="_blank" rel="noopener" aria-label="TikTok"><i class="bi bi-tiktok"></i></a>{{/tiktok}}
+      {{#facebook}}<a href="{{facebook}}" target="_blank" rel="noopener" aria-label="Facebook"><i class="bi bi-facebook"></i></a>{{/facebook}}
+      <a href="https://wa.me/{{wa}}" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="bi bi-whatsapp"></i></a>
+    </div>
+  </div>
+</footer>

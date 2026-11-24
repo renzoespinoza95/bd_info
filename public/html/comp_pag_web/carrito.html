@@ -1,0 +1,23 @@
+<div class="offcanvas offcanvas-end cart-panel" tabindex="-1" id="offcanvasCarrito" aria-labelledby="cartTitle">
+  <div class="offcanvas-header">
+    <h2 class="display m-0" id="cartTitle">Tu carrito</h2>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Cerrar"></button>
+  </div>
+  <div class="offcanvas-body">
+    <div class="cart-head"><span>Producto</span><span>Cantidad</span></div>
+    <ul id="cart-items" class="cart-items"></ul>
+    <div id="cart-empty" class="empty d-none"></div>
+
+    <div id="cart-form" class="d-none">
+      <div class="cart-total"><span>Total</span><b id="cart-total">S/ 0.00</b></div>
+      <label class="cart-lbl" for="cart-dir">Dirección de envío</label>
+      <input id="cart-dir" class="cart-input" type="text" placeholder="Calle, número, distrito" autocomplete="street-address">
+      <label class="cart-lbl" for="cart-tel">Teléfono</label>
+      <input id="cart-tel" class="cart-input" type="tel" placeholder="999 999 999" autocomplete="tel">
+      <label class="cart-lbl" for="cart-promo">Código promocional (opcional)</label>
+      <input id="cart-promo" class="cart-input" type="text">
+      <button id="cart-send" type="button" class="cart-send"><i class="bi bi-whatsapp"></i> ENVIAR PEDIDO</button>
+    </div>
+  </div>
+</div>
+<div id="gc-toast" class="gc-toast" role="status" aria-live="polite"></div>

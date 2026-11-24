@@ -1,0 +1,15 @@
+<section id="productos" class="band">
+  <div class="container">
+    <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+      <h2 class="display sec-title m-0"><span class="deco hand ring">Destacados</span> Productos</h2>
+    </div>
+    <div class="tabs mb-4">
+      <button type="button" class="tab-cat active" data-cat="all">Todo</button>
+      {{#categorias}}<button type="button" class="tab-cat" data-cat="{{id}}">{{name}}</button>{{/categorias}}
+    </div>
+    <div class="row g-4 row-cols-2 row-cols-lg-4" id="prod-grid">
+      {{#productos}}{{> item}}{{/productos}}
+    </div>
+    <div id="prod-empty" class="empty d-none"></div>
+  </div>
+</section>

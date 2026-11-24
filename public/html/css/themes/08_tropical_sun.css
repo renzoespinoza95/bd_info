@@ -1,0 +1,7 @@
+/* 08 TROPICAL SUN - VERANIEGO */
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&family=Rubik:wght@400;500;700&family=Pacifico&display=swap');
+:root{--bg:#FFF8E8;--main:#F05A28;--second:#00A896;--accent:#FFD166;--text:#3A3025;
+--f-title:'Fredoka',sans-serif;--f-body:'Rubik',sans-serif;--f-deco:'Pacifico',cursive;
+--title-tt:uppercase;--title-ls:0;--title-w:700;--title-lh:.95;--t-scale:1}
+.hand{font-size:clamp(1.3rem,3vw,2rem)}.hs-tag{font-size:clamp(1rem,2vw,1.4rem)}
+.band-pink{background:var(--second);color:#fff}.band-pink .btn-gc.dark{background:var(--accent);color:var(--text);border-color:var(--accent)}
